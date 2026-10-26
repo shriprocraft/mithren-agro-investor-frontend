@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* Provisional design tokens — mirrored in src/config/design-tokens.ts */
+@theme {
+  --color-brand-50: #F5FDF7;
+  --color-brand-100: #E3F4E6;
+  --color-brand-200: #A7D96C;
+  --color-brand-500: #43A047;
+  --color-brand-600: #2E7D32;
+  --color-brand-700: #1B5E20;
+  --color-brand-800: #174D1B;
+  --color-brand-900: #1F2D21;
+
+  --color-earth-50: #F5FDF7;
+  --color-earth-100: #F0F9F4;
+  --color-earth-200: #E8F1EA;
+
+  --color-ink: #1F2D21;
+  --color-muted: #667085;
+  --color-line: #E8F1EA;
+
+  --color-ok-bg: #E3F4E6;
+  --color-ok-fg: #1B5E20;
+  --color-warn-bg: #FFEFC9;
+  --color-warn-fg: #7a4f05;
+  --color-bad-bg: #fbe3df;
+  --color-bad-fg: #8f2a1e;
+  --color-info-bg: #e1ecf7;
+  --color-info-fg: #1d4a78;
+  --color-neutral-bg: #EEF4F0;
+  --color-neutral-fg: #475467;
+
+  --color-highlight: #FFD88A;
+  --color-card: #F0F9F4;
+  --color-soft: #F5FDF7;
+
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
+  --shadow-card: 0 1px 2px rgb(31 45 33 / 0.05), 0 4px 14px rgb(46 125 50 / 0.06);
+  --shadow-hover: 0 8px 24px rgb(46 125 50 / 0.16), 0 2px 6px rgb(31 45 33 / 0.08);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  background: #ffffff;
+  color: var(--color-ink);
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid #2E7D32;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Grid tracks must be allowed to shrink below their content's min-width, otherwise one wide table or
+   long title stretches a single-column mobile layout. Tailwind's grid-cols-* utilities still override this. */
+@layer base {
+  a, button, summary, input, select, textarea, tr {
+    transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: ease;
+  }
+  body { background: #ffffff; }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
