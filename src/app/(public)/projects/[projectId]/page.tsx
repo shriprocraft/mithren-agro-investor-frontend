@@ -9,7 +9,7 @@ import { Badge, Breadcrumbs, Button, Callout, Card, DefList, EmptyState, LinkBut
 import { ProjectStatusBadge } from "@/components/common/badges";
 import { MilestoneTimeline, ProjectImage } from "@/components/common/visuals";
 import { ProjectAnalysisView } from "@/components/analysis/ProjectAnalysisView";
-import { categoryLabel, COPY, STAGE_LABEL } from "@/config/demo-config";
+import { categoryLabel, COPY, durationLabel, STAGE_LABEL } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { fundingProgress } from "@/lib/analysis-calculations";
 import { formatDate, formatINR } from "@/lib/format";
@@ -72,7 +72,7 @@ export default function ProjectDetailPage() {
           <Section title="Overview">
             <p className="text-sm">{p.summary}</p>
             <p className="mt-3 text-sm"><strong>Objective:</strong> {p.objective}</p>
-            <div className="mt-4"><DefList rows={[["Production method", p.productionMethod], ["Duration", `${p.durationMonths} months`], ["Season", p.season], ["Region", p.region]]} /></div>
+            <div className="mt-4"><DefList rows={[["Production method", p.productionMethod], ["District", p.district || "—"], ["Duration", durationLabel(p.durationMonths)], ["Season", p.season], ["Region", p.region]]} /></div>
             <Callout tone={p.certification.status === "reviewed" ? "ok" : "neutral"} title="Organic / certification status" className="mt-4">
               {p.certification.note} The platform does not describe a project as “certified organic” without verified evidence.
             </Callout>

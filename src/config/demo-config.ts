@@ -28,16 +28,12 @@ export const SCENARIOS = {
 export type ScenarioKey = keyof typeof SCENARIOS;
 
 export const CATEGORIES: { id: CategoryId; label: string }[] = [
-  { id: "vegetables", label: "Vegetables" },
-  { id: "fruits", label: "Fruits" },
-  { id: "field_crops", label: "Field crops & grains" },
-  { id: "plantation", label: "Spices & plantation" },
-  { id: "dairy", label: "Dairy & cattle" },
-  { id: "poultry", label: "Poultry & eggs" },
-  { id: "livestock", label: "Goat/sheep & livestock" },
-  { id: "aquaculture", label: "Aquaculture" },
-  { id: "protected", label: "Protected cultivation" },
-  { id: "other", label: "Other agriculture" },
+  { id: "crop_cultivation", label: "Crop Cultivation" },
+  { id: "dairy_farming", label: "Dairy Farming" },
+  { id: "fish_farming", label: "Fish Farming" },
+  { id: "poultry_farming", label: "Poultry Farming" },
+  { id: "biogas_composting", label: "Biogas & Composting" },
+  { id: "agri_forestry", label: "Agri Forestry" },
 ];
 export const categoryLabel = (id: CategoryId) => CATEGORIES.find((c) => c.id === id)?.label ?? id;
 
@@ -120,3 +116,17 @@ export const INVESTMENT_STATUS_LABEL = {
   partially_exited_demo: "Partially exited (demo)",
   exited_demo: "Exited (demo)",
 } as const;
+
+/** All 38 districts of Tamil Nadu. */
+export const TN_DISTRICTS = [
+  "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi",
+  "Kancheepuram", "Kanniyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal",
+  "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur",
+  "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai",
+  "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar",
+] as const;
+
+/** Investment duration is limited to 1–3 months. */
+export const MAX_DURATION_MONTHS = 3;
+export const DURATION_OPTIONS = [1, 2, 3] as const;
+export const durationLabel = (m: number) => `${m} ${m === 1 ? "Month" : "Months"}`;

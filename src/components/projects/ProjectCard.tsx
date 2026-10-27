@@ -6,7 +6,7 @@ import { Calendar, Heart, MapPin } from "lucide-react";
 import { Badge, LinkButton, ProgressBar, Button } from "@/components/common/ui";
 import { ProjectStatusBadge } from "@/components/common/badges";
 import { ProjectImage } from "@/components/common/visuals";
-import { categoryLabel, STAGE_LABEL } from "@/config/demo-config";
+import { categoryLabel, durationLabel, STAGE_LABEL } from "@/config/demo-config";
 import { fundingProgress } from "@/lib/analysis-calculations";
 import { formatINR } from "@/lib/format";
 import { analysisCompleteness, COMPLETENESS_LABEL, riskLabel } from "@/lib/project-helpers";
@@ -28,11 +28,11 @@ export function ProjectCard({ project: p, saved, onToggleSave, layout = "grid", 
         </div>
         <div>
           <h3 className="text-lg font-bold leading-snug text-brand-900"><Link href={`/projects/${p.id}`} className="hover:underline">{p.title}</Link></h3>
-          <p className="mt-1 flex items-center gap-1 text-sm text-muted"><MapPin className="size-3.5" aria-hidden /> {p.location}</p>
+          <p className="mt-1 flex items-center gap-1 text-sm text-muted"><MapPin className="size-3.5" aria-hidden /> {p.district ? `${p.district}, ` : ""}{p.location}</p>
         </div>
         <p className="line-clamp-2 text-sm text-muted">{p.summary}</p>
         <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-          <li className="flex items-center gap-1"><Calendar className="size-3.5" aria-hidden /> {p.durationMonths} months · {p.season}</li>
+          <li className="flex items-center gap-1"><Calendar className="size-3.5" aria-hidden /> {durationLabel(p.durationMonths)} · {p.season}</li>
           <li>Stage: {STAGE_LABEL[p.stage]}</li>
           <li title="Demo risk label — see methodology on the project page">Risk label (demo): {risk}</li>
         </ul>

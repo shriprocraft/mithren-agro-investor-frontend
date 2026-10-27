@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createSeedState, STATE_VERSION } from "@/data/seed";
+import { normalizeProject } from "@/lib/project-helpers";
 import type { Actor } from "@/lib/mock-service";
 import type { DemoState, DemoUser, MockSession, ServiceResult } from "@/types";
 
@@ -56,8 +57,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(raw) as DemoState;
         if (parsed.version === STATE_VERSION) {
-          stateRef.current = parsed;
-          setState(parsed);
+          const migrated = { ...parsed, projects: parsed.projects.map(normalizeProject) };
+          stateRef.current = migrated;
+          setState(migrated);
         }
       } catch {
         /* ignore corrupt data; seed state remains */

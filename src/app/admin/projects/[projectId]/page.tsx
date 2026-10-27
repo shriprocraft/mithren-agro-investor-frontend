@@ -7,7 +7,7 @@ import { ProjectStatusBadge } from "@/components/common/badges";
 import { ConfirmationDialog, useToast } from "@/components/common/feedback";
 import { ProjectAnalysisView } from "@/components/analysis/ProjectAnalysisView";
 import { MilestoneTimeline } from "@/components/common/visuals";
-import { categoryLabel } from "@/config/demo-config";
+import { categoryLabel, durationLabel } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { formatDateTime, formatINR } from "@/lib/format";
 import { projectCompleteness, reviewProject, type ReviewDecision } from "@/lib/mock-service";
@@ -48,7 +48,7 @@ export default function AdminProjectReview() {
       <Callout tone="warn" className="mb-4">Decisions here are simulated. They do not constitute legal, compliance or due-diligence approval.</Callout>
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
-          <Card><h2 className="mb-3 text-lg font-bold text-brand-900">Submission</h2><p className="mb-3 text-sm">{p.summary}</p><DefList rows={[["Objective", p.objective || "—"], ["Production method", p.productionMethod], ["Certification statement", p.certification.note], ["Funding target (sample)", p.funding ? formatINR(p.funding.target) : "—"], ["Duration", `${p.durationMonths} months · ${p.season}`], ["Last updated", formatDateTime(p.updatedAt)]]} /></Card>
+          <Card><h2 className="mb-3 text-lg font-bold text-brand-900">Submission</h2><p className="mb-3 text-sm">{p.summary}</p><DefList rows={[["Objective", p.objective || "—"], ["Production method", p.productionMethod], ["Certification statement", p.certification.note], ["Funding target (sample)", p.funding ? formatINR(p.funding.target) : "—"], ["District", p.district || "—"], ["Duration", `${durationLabel(p.durationMonths)} · ${p.season}`], ["Last updated", formatDateTime(p.updatedAt)]]} /></Card>
           <ProjectAnalysisView project={p} />
           <Card><h2 className="mb-3 text-lg font-bold text-brand-900">Risks</h2>{p.risks.length === 0 ? <p className="text-sm text-muted">None listed.</p> : <ul className="space-y-2 text-sm">{p.risks.map((r) => <li key={r.id}><strong>{r.title}</strong> ({r.severity}) — {r.mitigation}</li>)}</ul>}<h2 className="mb-3 mt-5 text-lg font-bold text-brand-900">Milestones</h2><MilestoneTimeline items={p.milestones} /></Card>
           <Card><h2 className="mb-3 text-lg font-bold text-brand-900">Review history</h2>{p.reviewComments.length === 0 ? <p className="text-sm text-muted">No decisions recorded.</p> : <ul className="space-y-3 text-sm">{p.reviewComments.map((c) => <li key={c.id} className="rounded-control border border-line p-3"><p className="font-semibold">{c.decision} <span className="font-normal text-muted">· {c.actor} · {formatDateTime(c.at)}</span></p><p className="text-muted">{c.text}</p></li>)}</ul>}</Card>

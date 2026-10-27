@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button, Callout, Card, DefList, SelectField, TextAreaField, TextField } from "@/components/common/ui";
 import { Stepper } from "@/components/common/Stepper";
 import { useToast } from "@/components/common/feedback";
-import { CATEGORIES } from "@/config/demo-config";
+import { CATEGORIES, DURATION_OPTIONS, durationLabel, MAX_DURATION_MONTHS, TN_DISTRICTS } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { formatINR } from "@/lib/format";
 import { projectCompleteness, saveProjectDraft, submitProject } from "@/lib/mock-service";
@@ -17,7 +17,7 @@ const STEPS = ["Basics", "Location & timing", "Production & costs", "Sales & pri
 type Row = { id: string; a: string; b: string; c: string };
 type F = {
   title: string; summary: string; objective: string; category: CategoryId; crop: string; method: string; certNote: string;
-  location: string; region: string; stage: ProjectStage; months: string; season: string;
+  location: string; region: string; district: string; stage: ProjectStage; months: string; season: string;
   qty: string; unit: string; loss: string; costs: Row[]; // a=label b=amount c=kind
   price: string; deduct: string; priceSource: string;
   risks: Row[]; // a=title b=severity c=mitigation
@@ -31,9 +31,9 @@ const num = (s: string) => (s.trim() === "" ? NaN : Number(s.replace(/,/g, "")))
 function fromProject(p: Project | undefined): F {
   const a = p?.analysis;
   return {
-    title: p?.title ?? "", summary: p?.summary ?? "", objective: p?.objective ?? "", category: p?.category ?? "vegetables", crop: p?.crop ?? "",
+    title: p?.title ?? "", summary: p?.summary ?? "", objective: p?.objective ?? "", category: p?.category ?? "crop_cultivation", crop: p?.crop ?? "",
     method: p?.productionMethod ?? "Organic practices (not certified)", certNote: p?.certification.status === "claimed" ? p.certification.note : "",
-    location: p?.location ?? "", region: p?.region ?? "", stage: p?.stage ?? "preparation", months: String(p?.durationMonths ?? 6), season: p?.season ?? "",
+    location: p?.location ?? "", region: p?.region ?? "", district: p?.district ?? "", stage: p?.stage ?? "preparation", months: String(p?.durationMonths ?? 1), season: p?.season ?? "",
     qty: a ? String(a.plannedQty) : "", unit: a?.qtyUnit ?? "kg", loss: a ? String(a.lossRatePct) : "10",
     costs: a?.costs.map((c) => ({ id: c.id, a: c.label, b: String(c.amount), c: c.kind })) ?? [{ id: uid(), a: "", b: "", c: "opex" }],
     price: a?.pricePerUnit != null ? String(a.pricePerUnit) : "", deduct: a?.salesDeductionPct != null ? String(a.salesDeductionPct) : "5", priceSource: a?.assumptions.find((x) => x.label.includes("price") || x.label === "Price")?.source ?? "",
@@ -48,7 +48,7 @@ function toProject(f: F, base: Project | undefined, ownerId: string): Project {
   const price = num(f.price);
   const now = new Date().toISOString();
   return {
-    id: base?.id ?? "new", ownerId, title: f.title.trim(), category: f.category, crop: f.crop.trim(), location: f.location.trim(), region: f.region.trim() || "—",
+    id: base?.id ?? "new", ownerId, title: f.title.trim(), category: f.category, crop: f.crop.trim(), location: f.location.trim(), region: f.region.trim() || "—", district: f.district,
     summary: f.summary.trim(), objective: f.objective.trim(), productionMethod: f.method,
     certification: f.certNote.trim() ? { status: "claimed", note: `${f.certNote.trim()} (owner statement, not verified)` } : { status: "none", note: "No certification claimed." },
     stage: f.stage, status: base?.status ?? "draft", durationMonths: num(f.months) || 1, season: f.season.trim() || "—", featured: false,
@@ -113,8 +113,9 @@ export function ProjectForm({ existing }: { existing?: Project }) {
     }
     if (s === 1) {
       if (!f.location.trim()) e.location = "Enter the farm location.";
+      if (!(TN_DISTRICTS as readonly string[]).includes(f.district)) e.district = "Select a district.";
       const m = num(f.months);
-      if (!(m >= 1 && m <= 60)) e.months = "Enter a duration between 1 and 60 months.";
+      if (!(Number.isInteger(m) && m >= 1 && m <= MAX_DURATION_MONTHS)) e.months = "Select a duration of 1 to 3 months.";
     }
     if (s === 2) {
       if (!(num(f.qty) > 0)) e.qty = "Enter a planned quantity above zero.";
@@ -164,7 +165,7 @@ export function ProjectForm({ existing }: { existing?: Project }) {
         </>)}
         {step === 1 && (<>
           <div className="grid gap-4 sm:grid-cols-2"><TextField label="Farm location" required value={f.location} onChange={(e) => set("location", e.target.value)} error={errors.location} /><TextField label="Region" value={f.region} onChange={(e) => set("region", e.target.value)} /></div>
-          <div className="grid gap-4 sm:grid-cols-3"><TextField label="Duration (months)" required inputMode="numeric" value={f.months} onChange={(e) => set("months", e.target.value)} error={errors.months} /><TextField label="Season" value={f.season} onChange={(e) => set("season", e.target.value)} /><SelectField label="Current stage" value={f.stage} onChange={(e) => set("stage", e.target.value as ProjectStage)}><option value="preparation">Preparation</option><option value="growing">Growing / production</option><option value="harvest">Harvest</option><option value="sales">Sales & delivery</option></SelectField></div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><SelectField label="District" required value={f.district} onChange={(e) => set("district", e.target.value)} error={errors.district}><option value="">Select district</option>{TN_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}</SelectField><SelectField label="Duration" required value={f.months} onChange={(e) => set("months", e.target.value)} error={errors.months}>{DURATION_OPTIONS.map((m) => <option key={m} value={m}>{durationLabel(m)}</option>)}</SelectField><TextField label="Season" value={f.season} onChange={(e) => set("season", e.target.value)} /><SelectField label="Current stage" value={f.stage} onChange={(e) => set("stage", e.target.value as ProjectStage)}><option value="preparation">Preparation</option><option value="growing">Growing / production</option><option value="harvest">Harvest</option><option value="sales">Sales & delivery</option></SelectField></div>
         </>)}
         {step === 2 && (<>
           <div className="grid gap-4 sm:grid-cols-3"><TextField label="Planned output" required inputMode="decimal" value={f.qty} onChange={(e) => set("qty", e.target.value)} error={errors.qty} /><TextField label="Unit" value={f.unit} onChange={(e) => set("unit", e.target.value)} hint="kg, litres, eggs…" /><TextField label="Expected loss (%)" inputMode="decimal" value={f.loss} onChange={(e) => set("loss", e.target.value)} error={errors.loss} /></div>

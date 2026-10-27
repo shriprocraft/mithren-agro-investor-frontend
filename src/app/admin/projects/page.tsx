@@ -17,7 +17,7 @@ export default function AdminProjects() {
   const rows = state.projects.filter((p) => (status === "queue" ? ["submitted", "under_review", "changes_requested"].includes(p.status) : status === "" ? true : p.status === status));
   const owner = (p: Project) => state.users.find((u) => u.id === p.ownerId)?.orgName ?? p.ownerId;
   const columns: Column<Project>[] = [
-    { key: "t", header: "Project", sort: (p) => p.title, cell: (p) => (<div><Link href={`/admin/projects/${p.id}`} className="font-semibold text-brand-800 hover:underline">{p.title}</Link><span className="block text-xs text-muted">{categoryLabel(p.category)} · {p.location}</span></div>) },
+    { key: "t", header: "Project", sort: (p) => p.title, cell: (p) => (<div><Link href={`/admin/projects/${p.id}`} className="font-semibold text-brand-800 hover:underline">{p.title}</Link><span className="block text-xs text-muted">{categoryLabel(p.category)} · {p.district ? `${p.district}, ` : ""}{p.location}</span></div>) },
     { key: "o", header: "Owner", cell: (p) => owner(p) },
     { key: "a", header: "Analysis", cell: (p) => COMPLETENESS_LABEL[analysisCompleteness(p)] },
     { key: "s", header: "Status", cell: (p) => <ProjectStatusBadge status={p.status} /> },

@@ -63,16 +63,12 @@ export type ProjectStatus =
 export type ProjectStage = "preparation" | "growing" | "harvest" | "sales" | "closed";
 
 export type CategoryId =
-  | "vegetables"
-  | "fruits"
-  | "field_crops"
-  | "plantation"
-  | "dairy"
-  | "poultry"
-  | "livestock"
-  | "aquaculture"
-  | "protected"
-  | "other";
+  | "crop_cultivation"
+  | "dairy_farming"
+  | "fish_farming"
+  | "poultry_farming"
+  | "biogas_composting"
+  | "agri_forestry";
 
 export type EvidenceLabel =
   | "operator_provided"
@@ -141,6 +137,7 @@ export type Project = {
   crop: string;
   location: string;
   region: string;
+  district: string;
   summary: string;
   objective: string;
   productionMethod: string;

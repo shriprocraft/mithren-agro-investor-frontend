@@ -1,4 +1,5 @@
-import type { DemoState, Project } from "@/types";
+import { CATEGORIES, MAX_DURATION_MONTHS } from "@/config/demo-config";
+import type { CategoryId, DemoState, Project } from "@/types";
 
 export type Completeness = "full" | "limited" | "none";
 
@@ -33,6 +34,16 @@ export const publishedProjects = (s: DemoState) => s.projects.filter(isPublished
 
 export const projectById = (s: DemoState, id: string) => s.projects.find((p) => p.id === id);
 
-export function durationBucket(months: number): "short" | "medium" | "long" {
-  return months <= 6 ? "short" : months <= 12 ? "medium" : "long";
+const LEGACY_CATEGORY: Record<string, CategoryId> = {
+  vegetables: "crop_cultivation", fruits: "crop_cultivation", field_crops: "crop_cultivation", plantation: "crop_cultivation",
+  protected: "crop_cultivation", other: "crop_cultivation", dairy: "dairy_farming", livestock: "dairy_farming",
+  poultry: "poultry_farming", aquaculture: "fish_farming",
+};
+
+/** Maps records saved before the six-category / district / 3-month rules onto the current model. */
+export function normalizeProject(p: Project): Project {
+  const category = CATEGORIES.some((c) => c.id === p.category) ? p.category : LEGACY_CATEGORY[p.category as string] ?? "crop_cultivation";
+  const months = Math.round(Number(p.durationMonths));
+  const durationMonths = months >= 1 && months <= MAX_DURATION_MONTHS ? months : MAX_DURATION_MONTHS;
+  return { ...p, category, durationMonths, district: p.district ?? "" };
 }

@@ -1,4 +1,4 @@
-import { DEMO_CONFIG } from "@/config/demo-config";
+import { CATEGORIES, DEMO_CONFIG, MAX_DURATION_MONTHS, TN_DISTRICTS } from "@/config/demo-config";
 import { checklistFor } from "@/data/users";
 import type {
   BankDetails,
@@ -360,6 +360,9 @@ export function projectCompleteness(p: Project): string[] {
   if (p.title.trim().length < 5) issues.push("Add a project title (5+ characters).");
   if (p.summary.trim().length < 20) issues.push("Write a summary (20+ characters).");
   if (!p.location.trim()) issues.push("Add the farm location.");
+  if (!(TN_DISTRICTS as readonly string[]).includes(p.district)) issues.push("Select a Tamil Nadu district.");
+  if (!CATEGORIES.some((c) => c.id === p.category)) issues.push("Select a valid investment category.");
+  if (!Number.isInteger(p.durationMonths) || p.durationMonths < 1 || p.durationMonths > MAX_DURATION_MONTHS) issues.push(`Duration must be 1 to ${MAX_DURATION_MONTHS} months.`);
   if (!p.funding || !(p.funding.target > 0)) issues.push("Enter a funding target above zero.");
   if (!p.analysis || !(p.analysis.plannedQty > 0)) issues.push("Enter planned production quantity.");
   if (!p.analysis || p.analysis.costs.length === 0) issues.push("Add at least one cost line.");
@@ -370,6 +373,9 @@ export function projectCompleteness(p: Project): string[] {
 
 export function saveProjectDraft(state: DemoState, project: Project, actor: Actor): ServiceResult<string> {
   const existing = state.projects.find((p) => p.id === project.id);
+  if (!CATEGORIES.some((c) => c.id === project.category)) return fail("Select a valid investment category.");
+  if (project.district && !(TN_DISTRICTS as readonly string[]).includes(project.district)) return fail("Select a valid Tamil Nadu district.");
+  if (!Number.isInteger(project.durationMonths) || project.durationMonths < 1 || project.durationMonths > MAX_DURATION_MONTHS) return fail(`Duration must be 1 to ${MAX_DURATION_MONTHS} months.`);
   if (existing && !EDITABLE.includes(existing.status)) return fail("This project can no longer be edited (it is under review or published).");
   const at = nowIso();
   if (existing) {

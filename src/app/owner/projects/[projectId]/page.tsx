@@ -6,7 +6,7 @@ import { ProjectStatusBadge } from "@/components/common/badges";
 import { ProjectAnalysisView } from "@/components/analysis/ProjectAnalysisView";
 import { AddUpdateForm, MilestoneControls } from "@/components/owner/ProgressPanel";
 import { useDemo } from "@/context/DemoContext";
-import { categoryLabel, STAGE_LABEL } from "@/config/demo-config";
+import { categoryLabel, durationLabel, STAGE_LABEL } from "@/config/demo-config";
 import { formatDate, formatDateTime, formatINR } from "@/lib/format";
 import { projectById } from "@/lib/project-helpers";
 
@@ -25,7 +25,7 @@ export default function OwnerProjectDetail() {
       {p.status === "rejected_demo" && <Callout tone="warn" title="Rejected (demo)" className="mb-4">{p.reviewComments.at(-1)?.text} You can create a new project that addresses the points.</Callout>}
       {["submitted", "under_review"].includes(p.status) && <Callout tone="info" className="mb-4">Waiting for admin review (demo). Editing is locked.</Callout>}
       <Tabs tabs={[
-        { id: "overview", label: "Overview", content: (<Card><DefList rows={[["Stage", STAGE_LABEL[p.stage]], ["Duration", `${p.durationMonths} months · ${p.season}`], ["Production method", p.productionMethod], ["Funding target (sample)", p.funding ? formatINR(p.funding.target) : "—"], ["Raised (sample)", p.funding ? formatINR(p.funding.raised) : "—"], ["Last updated", formatDateTime(p.updatedAt)]]} /><p className="mt-4 text-sm">{p.summary}</p></Card>) },
+        { id: "overview", label: "Overview", content: (<Card><DefList rows={[["Stage", STAGE_LABEL[p.stage]], ["District", p.district || "—"], ["Duration", `${durationLabel(p.durationMonths)} · ${p.season}`], ["Production method", p.productionMethod], ["Funding target (sample)", p.funding ? formatINR(p.funding.target) : "—"], ["Raised (sample)", p.funding ? formatINR(p.funding.raised) : "—"], ["Last updated", formatDateTime(p.updatedAt)]]} /><p className="mt-4 text-sm">{p.summary}</p></Card>) },
         { id: "analysis", label: "Analysis", content: <ProjectAnalysisView project={p} /> },
         { id: "milestones", label: "Milestones", content: <MilestoneControls project={p} /> },
         { id: "updates", label: "Updates", content: (<div className="grid gap-6 lg:grid-cols-2"><AddUpdateForm project={p} /><div>{p.updates.length === 0 ? <p className="text-sm text-muted">No updates yet.</p> : <ul className="space-y-3 text-sm">{p.updates.map((u) => <li key={u.id}><strong>{u.title}</strong> <span className="text-muted">· {formatDate(u.date)}</span><br /><span className="text-muted">{u.body}</span></li>)}</ul>}</div></div>) },

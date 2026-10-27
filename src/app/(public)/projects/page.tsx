@@ -7,12 +7,19 @@ import { useToast } from "@/components/common/feedback";
 import { SearchInput } from "@/components/common/DataTable";
 import { Button, EmptyState, ErrorState, LoadingPage, SelectField } from "@/components/common/ui";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { CATEGORIES, categoryLabel, STAGE_LABEL } from "@/config/demo-config";
+import { CATEGORIES, categoryLabel, STAGE_LABEL, TN_DISTRICTS } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { fundingProgress } from "@/lib/analysis-calculations";
 import { toggleWatchlist } from "@/lib/mock-service";
-import { durationBucket, publishedProjects, riskLabel } from "@/lib/project-helpers";
+import { publishedProjects, riskLabel } from "@/lib/project-helpers";
 import type { CategoryId, ProjectStage } from "@/types";
+
+const DURATION_FILTERS: Record<string, { label: string; match: (months: number) => boolean }> = {
+  upto3: { label: "Up to 3 months", match: (m) => m <= 3 },
+  upto6: { label: "Up to 6 months", match: (m) => m <= 6 },
+  "7to12": { label: "7–12 months", match: (m) => m >= 7 && m <= 12 },
+  over12: { label: "Over 12 months", match: (m) => m > 12 },
+};
 
 type Sort = "featured" | "newest" | "funding" | "duration";
 type DemoView = "default" | "loading" | "error" | "empty";
@@ -27,6 +34,7 @@ function Explorer() {
   const [region, setRegion] = useState("");
   const [stage, setStage] = useState("");
   const [duration, setDuration] = useState("");
+  const [district, setDistrict] = useState("");
   const [risk, setRisk] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const [layout, setLayout] = useState<"grid" | "list">("grid");
@@ -41,7 +49,7 @@ function Explorer() {
     const out = all.filter((p) =>
       (!t || [p.title, p.crop, p.location, categoryLabel(p.category)].join(" ").toLowerCase().includes(t)) &&
       (!category || p.category === category) && (!region || p.region === region) && (!stage || p.stage === stage) &&
-      (!duration || durationBucket(p.durationMonths) === duration) && (!risk || riskLabel(p) === risk),
+      (!district || p.district === district) && (!duration || DURATION_FILTERS[duration]?.match(p.durationMonths)) && (!risk || riskLabel(p) === risk),
     );
     const cmp: Record<Sort, (a: (typeof out)[number], b: (typeof out)[number]) => number> = {
       featured: (a, b) => Number(b.featured) - Number(a.featured) || a.title.localeCompare(b.title),
@@ -50,17 +58,18 @@ function Explorer() {
       duration: (a, b) => a.durationMonths - b.durationMonths,
     };
     return [...out].sort(cmp[sort]);
-  }, [all, q, category, region, stage, duration, risk, sort]);
+  }, [all, q, category, region, stage, district, duration, risk, sort]);
 
   const chips: { label: string; clear: () => void }[] = [
     q && { label: `Search: “${q}”`, clear: () => setQ("") },
     category && { label: categoryLabel(category as CategoryId), clear: () => setCategory("") },
     region && { label: region, clear: () => setRegion("") },
     stage && { label: STAGE_LABEL[stage as ProjectStage], clear: () => setStage("") },
-    duration && { label: { short: "Up to 6 months", medium: "7–12 months", long: "Over 12 months" }[duration] ?? duration, clear: () => setDuration("") },
+    district && { label: district, clear: () => setDistrict("") },
+    duration && { label: DURATION_FILTERS[duration]?.label ?? duration, clear: () => setDuration("") },
     risk && { label: `Risk label (demo): ${risk}`, clear: () => setRisk("") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
-  const reset = () => { setQ(""); setCategory(""); setRegion(""); setStage(""); setDuration(""); setRisk(""); };
+  const reset = () => { setQ(""); setCategory(""); setRegion(""); setStage(""); setDistrict(""); setDuration(""); setRisk(""); };
 
   const onToggle = (id: string) => {
     if (!session) { router.push(`/login?next=${encodeURIComponent("/projects")}`); return; }
@@ -74,12 +83,13 @@ function Explorer() {
       <h1 className="text-3xl font-bold tracking-tight text-brand-900">Browse projects</h1>
       <p className="mt-1 text-sm text-muted">Fictional agriculture projects for demonstration. Funding figures are sample data.</p>
 
-      <div className="mt-6 grid gap-3 rounded-card border border-line bg-white p-4 shadow-card sm:grid-cols-2 lg:grid-cols-4">
-        <div className="sm:col-span-2 lg:col-span-4"><SearchInput value={q} onChange={setQ} label="Search projects" placeholder="Search by name, crop, category or location" /></div>
+      <div className="mt-6 grid gap-3 rounded-card border border-line bg-white p-4 shadow-card sm:grid-cols-2 lg:grid-cols-5">
+        <div className="sm:col-span-2 lg:col-span-5"><SearchInput value={q} onChange={setQ} label="Search projects" placeholder="Search by name, crop, category or location" /></div>
         <SelectField label="Category" value={category} onChange={(e) => setCategory(e.target.value)}><option value="">All categories</option>{CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}</SelectField>
         <SelectField label="Region" value={region} onChange={(e) => setRegion(e.target.value)}><option value="">All regions</option>{regions.map((r) => <option key={r}>{r}</option>)}</SelectField>
         <SelectField label="Stage" value={stage} onChange={(e) => setStage(e.target.value)}><option value="">All stages</option>{Object.entries(STAGE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</SelectField>
-        <SelectField label="Duration" value={duration} onChange={(e) => setDuration(e.target.value)}><option value="">Any duration</option><option value="short">Up to 6 months</option><option value="medium">7–12 months</option><option value="long">Over 12 months</option></SelectField>
+        <SelectField label="District" value={district} onChange={(e) => setDistrict(e.target.value)}><option value="">All districts</option>{TN_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}</SelectField>
+        <SelectField label="Duration" value={duration} onChange={(e) => setDuration(e.target.value)}><option value="">Any duration</option>{Object.entries(DURATION_FILTERS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</SelectField>
         <SelectField label="Risk label (demo method)" value={risk} onChange={(e) => setRisk(e.target.value)}><option value="">Any</option><option>Lower</option><option>Moderate</option><option>Higher</option></SelectField>
         <SelectField label="Sort by" value={sort} onChange={(e) => setSort(e.target.value as Sort)}><option value="featured">Featured</option><option value="newest">Newest</option><option value="funding">Funding progress</option><option value="duration">Shortest duration</option></SelectField>
       </div>
