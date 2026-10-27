@@ -15,7 +15,7 @@ export default function OwnerDashboard() {
   return (
     <>
       <PageTitle title={`Welcome, ${o.user?.name.split(" ")[0] ?? ""}`} subtitle={<>{o.user?.orgName} · verification: {o.user && <VerificationBadge status={o.user.verification} />}</>} actions={<LinkButton href="/owner/projects/new">New project</LinkButton>} />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Projects" value={o.projects.length} />
         <StatCard label="Drafts / changes requested" value={by("draft", "changes_requested")} />
         <StatCard label="Submitted / in review" value={by("submitted", "under_review")} />

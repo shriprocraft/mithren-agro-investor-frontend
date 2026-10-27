@@ -15,8 +15,8 @@ export default function InvestorDashboard() {
   const { state } = useDemo();
   const d = useInvestor();
   const active = d.investments.filter((i) => i.status !== "exited_demo");
-  const milestones = active
-    .map((i) => projectById(state, i.projectId))
+  const milestones = [...new Set(active.map((i) => i.projectId))]
+    .map((id) => projectById(state, id))
     .filter((p) => !!p)
     .flatMap((p) => p!.milestones.filter((m) => m.status !== "done").map((m) => ({ ...m, project: p!.title, projectId: p!.id })))
     .sort((a, b) => a.plannedDate.localeCompare(b.plannedDate))
@@ -51,7 +51,7 @@ export default function InvestorDashboard() {
           <h2 className="mb-3 text-lg font-bold text-brand-900">Needs your attention</h2>
           {actions.length === 0 ? <p className="text-sm text-muted">Nothing is waiting on you.</p> : <ul className="space-y-2">{actions.map((a) => (<li key={a.text}><Link href={a.href} className="block rounded-control bg-warn-bg px-3 py-2 text-sm font-semibold text-warn-fg hover:underline">{a.text}</Link></li>))}</ul>}
           <h2 className="mb-2 mt-6 text-lg font-bold text-brand-900">Upcoming milestones</h2>
-          {milestones.length === 0 ? <p className="text-sm text-muted">No upcoming milestones for your projects.</p> : <ul className="space-y-2 text-sm">{milestones.map((m) => (<li key={m.projectId + m.id}><Link href={`/projects/${m.projectId}`} className="font-semibold hover:underline">{m.title}</Link><span className="block text-xs text-muted">{m.project} · planned {formatDate(m.plannedDate)}</span></li>))}</ul>}
+          {milestones.length === 0 ? <p className="text-sm text-muted">No upcoming milestones for your projects.</p> : <ul className="space-y-2 text-sm">{milestones.map((m) => (<li key={`${m.projectId}:${m.id}`}><Link href={`/projects/${m.projectId}`} className="font-semibold hover:underline">{m.title}</Link><span className="block text-xs text-muted">{m.project} · planned {formatDate(m.plannedDate)}</span></li>))}</ul>}
         </Card>
       </div>
 

@@ -60,3 +60,11 @@ export const WORKSPACE_NAV: Record<Role, NavItem[]> = {
     { href: "/admin/settings", label: "Settings", icon: Settings },
   ],
 };
+
+/** Section headings for the investor sidebar; every investor nav item appears in exactly one group. */
+export const INVESTOR_NAV_GROUPS: { title: string; hrefs: string[] }[] = [
+  { title: "Overview", hrefs: ["/investor/dashboard"] },
+  { title: "Invest", hrefs: ["/projects", "/investor/watchlist", "/investor/portfolio"] },
+  { title: "Money", hrefs: ["/investor/cash", "/investor/withdraw", "/investor/transactions"] },
+  { title: "Account", hrefs: ["/investor/documents", "/investor/notifications", "/investor/verification", "/investor/bank-details", "/investor/profile", "/investor/support"] },
+];
