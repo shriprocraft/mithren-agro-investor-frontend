@@ -45,7 +45,7 @@ export default function OwnerOnboarding() {
         <TextAreaField label="Farm / business overview" required value={f.overview} onChange={(x) => set("overview", x.target.value)} error={e.overview} />
         <SelectField label="Years of agriculture experience" required value={f.experience} onChange={(x) => set("experience", x.target.value)} error={e.experience}><option value="">Select…</option><option>Less than 2</option><option>2–5</option><option>5–10</option><option>More than 10</option></SelectField>
         <div><label htmlFor="odoc" className="mb-1 block text-sm font-semibold">Supporting document (optional, local preview only)</label><input id="odoc" type="file" onChange={(x) => set("fileName", x.target.files?.[0]?.name ?? "")} className="block text-sm" />{f.fileName && <p className="mt-1 text-xs text-muted">Selected: {f.fileName} — stays in your browser.</p>}</div>
-        <Callout tone="warn">Do not choose real documents. Land, licence and certification checks are not performed in this prototype.</Callout>
+        <Callout tone="neutral">Do not choose real documents. Land, licence and certification checks are not performed in this prototype.</Callout>
         <div className="flex justify-end"><Button onClick={submit}>Submit (demo)</Button></div>
       </Card>
     </div>

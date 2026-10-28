@@ -66,7 +66,7 @@ export function ProjectAnalysisView({ project: p }: { project: Project }) {
 
   return (
     <div className="space-y-4">
-      <Callout tone="warn" title="Illustrative sample data">
+      <Callout tone="neutral" title="Illustrative sample data">
         All figures are fictional demo inputs. Analysis as of {formatDate(a.asOf)}{a.reviewedBy ? ` · reviewed by ${a.reviewedBy} (demo)` : " · not yet reviewed"}. {COPY.projectNotReturn}
       </Callout>
       {comp === "limited" && <Callout tone="info" title="Limited analysis">Sales price evidence has not been provided, so revenue, surplus and margin are shown as “{NA}”. They have not been estimated.</Callout>}

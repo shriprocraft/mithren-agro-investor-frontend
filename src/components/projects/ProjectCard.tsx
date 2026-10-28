@@ -13,7 +13,7 @@ import { analysisCompleteness, COMPLETENESS_LABEL, riskLabel } from "@/lib/proje
 import { cn } from "@/lib/cn";
 import type { Project } from "@/types";
 
-export function ProjectCard({ project: p, saved, onToggleSave, layout = "grid", showStatus }: { project: Project; saved?: boolean; onToggleSave?: () => void; layout?: "grid" | "list"; showStatus?: boolean }) {
+export function ProjectCard({ project: p, saved, onToggleSave, layout = "grid", showStatus, viewHref }: { project: Project; saved?: boolean; onToggleSave?: () => void; layout?: "grid" | "list"; showStatus?: boolean; viewHref?: string }) {
   const prog = fundingProgress(p.funding);
   const comp = analysisCompleteness(p);
   const risk = riskLabel(p);
@@ -43,7 +43,7 @@ export function ProjectCard({ project: p, saved, onToggleSave, layout = "grid", 
           </div>
         )}
         <div className="mt-auto flex flex-wrap gap-2 pt-1">
-          <LinkButton href={`/projects/${p.id}`} className="flex-1">View project</LinkButton>
+          <LinkButton href={viewHref ?? `/projects/${p.id}`} className="flex-1">View project</LinkButton>
           {onToggleSave && (
             <Button variant="secondary" aria-pressed={saved} aria-label={saved ? `Remove ${p.title} from watchlist` : `Save ${p.title} to watchlist`} onClick={onToggleSave}>
               <Heart className={cn("size-4", saved && "fill-brand-600 text-brand-600")} aria-hidden /> {saved ? "Saved" : "Save"}

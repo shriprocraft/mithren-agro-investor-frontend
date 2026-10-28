@@ -106,7 +106,7 @@ export default function ProjectDetailPage() {
 
         <aside className="lg:sticky lg:top-24 lg:self-start" aria-label="Funding and demo investment">
           <Card className="space-y-4">
-            <h2 className="text-lg font-bold text-brand-900">Funding summary <span className="ml-1 rounded bg-warn-bg px-1.5 py-0.5 text-[11px] text-warn-fg">SAMPLE</span></h2>
+            <h2 className="text-lg font-bold text-brand-900">Funding summary <span className="ml-1 rounded bg-neutral-bg px-1.5 py-0.5 text-[11px] text-neutral-fg">SAMPLE</span></h2>
             {p.funding ? (
               <>
                 <div><p className="tabular text-2xl font-bold">{formatINR(p.funding.raised)}</p><p className="text-sm text-muted">of {formatINR(p.funding.target)} sample target · {formatINR(remaining)} remaining</p></div>
@@ -124,7 +124,7 @@ export default function ProjectDetailPage() {
             ) : (
               <LinkButton href={`/investor/invest/${p.id}`} className="w-full">Simulate an investment</LinkButton>
             )}
-            <Callout tone="warn">Demo only — no real payment is taken. {COPY.noGuarantee} <Link href="/risk-disclosure" className="font-semibold underline">Risk disclosure</Link></Callout>
+            <Callout tone="neutral">Demo only — no real payment is taken. {COPY.noGuarantee} <Link href="/risk-disclosure" className="font-semibold underline">Risk disclosure</Link></Callout>
           </Card>
         </aside>
       </div>

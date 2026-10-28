@@ -57,7 +57,7 @@ export default function RegisterPage() {
         </form>
         <p className="mt-4 text-sm text-muted">Already have a demo account? <Link href="/login" className="font-semibold text-brand-700 hover:underline">Log in</Link></p>
       </Card>
-      <Callout tone="warn" className="mt-4">Passwords are never stored or checked in this prototype.</Callout>
+      <Callout tone="neutral" className="mt-4">Passwords are never stored or checked in this prototype.</Callout>
     </div>
   );
 }

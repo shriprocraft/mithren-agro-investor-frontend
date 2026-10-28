@@ -49,7 +49,7 @@ export default function InvestmentDetailPage() {
           {sellDisabledReason ? (<><Button disabled className="mt-1 w-full" title={sellDisabledReason}>Sell / redeem (demo)</Button><p className="mt-2 text-xs text-muted">{sellDisabledReason}</p></>) : <LinkButton href={`/investor/portfolio/${inv.id}/sell`} className="mt-1 w-full">Sell / redeem (demo)</LinkButton>}
         </Card>
       </div>
-      <Callout tone="warn" className="mt-4">Valuation method: {DEMO_CONFIG.valuationMethodNote} A current estimate is not necessarily a sell quote, and a buyer or settlement is never guaranteed.</Callout>
+      <Callout tone="neutral" className="mt-4">Valuation method: {DEMO_CONFIG.valuationMethodNote} A current estimate is not necessarily a sell quote, and a buyer or settlement is never guaranteed.</Callout>
 
       <div className="mt-6">
         <Tabs tabs={[

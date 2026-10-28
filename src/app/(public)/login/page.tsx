@@ -66,7 +66,7 @@ function LoginForm() {
             <li key={d.userId}><button type="button" onClick={() => shortcut(d.userId)} className="w-full rounded-control border border-line bg-earth-50 p-3 text-left hover:bg-brand-50"><span className="block font-semibold">{d.label}</span><span className="block text-xs text-muted">{d.hint}</span></button></li>
           ))}
         </ul>
-        <Callout tone="warn" className="mt-4">Demo session. Do not enter real credentials anywhere in this prototype.</Callout>
+        <Callout tone="neutral" className="mt-4">Demo session. Do not enter real credentials anywhere in this prototype.</Callout>
       </Card>
     </div>
   );

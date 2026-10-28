@@ -28,7 +28,7 @@ export default function HowItWorksPage() {
           </li>
         ))}
       </ol>
-      <Callout tone="warn" className="mt-8" title="Three different things — not to be confused">
+      <Callout tone="neutral" className="mt-8" title="Three different things — not to be confused">
         <ul className="list-disc pl-5">
           <li><strong>Withdraw available cash:</strong> request payout of settled demo cash.</li>
           <li><strong>Sell / redeem an investment:</strong> a simulated exit whose proceeds are pending until settled.</li>

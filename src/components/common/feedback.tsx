@@ -95,7 +95,7 @@ export function DemoDocumentPreview({ open, onClose, title, category }: { open: 
   return (
     <Modal open={open} onClose={onClose} title={title} wide>
       <div className="rounded-control border border-dashed border-line bg-earth-50 p-5 text-sm">
-        <p className="mb-2 inline-block rounded bg-warn-bg px-2 py-0.5 text-xs font-bold text-warn-fg">DEMONSTRATION MATERIAL — {category.toUpperCase()}</p>
+        <p className="mb-2 inline-block rounded bg-neutral-bg px-2 py-0.5 text-xs font-bold text-neutral-fg">DEMONSTRATION MATERIAL — {category.toUpperCase()}</p>
         <p>This is a placeholder preview. It is not a legal agreement, receipt, or statement, and it has not been executed or issued by any real entity.</p>
         <p className="mt-3 text-muted">In a live product, the document generated from approved templates and a trusted transaction record would appear here.</p>
       </div>

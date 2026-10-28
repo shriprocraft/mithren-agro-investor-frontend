@@ -205,7 +205,7 @@ export function CheckField({ label, error, checked, onChange, children }: { labe
   return (
     <div>
       <div className="flex items-start gap-3">
-        <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} aria-invalid={!!error} aria-describedby={error ? `${id}-err` : undefined} className="mt-1 size-5 shrink-0 accent-brand-600" />
+        <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} aria-invalid={!!error} aria-describedby={error ? `${id}-err` : undefined} className="size-5 shrink-0 accent-brand-600" />
         <label htmlFor={id} className="text-sm text-ink">{label ?? children}</label>
       </div>
       {error && <p id={`${id}-err`} role="alert" className="mt-1 pl-8 text-xs font-medium text-bad-fg">{error}</p>}

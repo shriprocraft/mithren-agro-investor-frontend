@@ -35,7 +35,7 @@ export default function HomePage() {
             </div>
           </motion.div>
           <Card className="md:col-span-2">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Demo catalogue at a glance <span className="ml-1 rounded bg-warn-bg px-1.5 py-0.5 text-[11px] text-warn-fg">SAMPLE</span></h2>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Demo catalogue at a glance <span className="ml-1 rounded bg-neutral-bg px-1.5 py-0.5 text-[11px] text-neutral-fg">SAMPLE</span></h2>
             <dl className="mt-3 grid grid-cols-2 gap-4">
               <div><dt className="text-xs text-muted">Listed projects</dt><dd className="tabular text-3xl font-bold text-brand-900">{published.length}</dd></div>
               <div><dt className="text-xs text-muted">Categories supported</dt><dd className="tabular text-3xl font-bold text-brand-900">{CATEGORIES.length}</dd></div>
@@ -50,7 +50,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold text-brand-900">Featured projects</h2>
           <Link href="/projects" className="text-sm font-semibold text-brand-700 hover:underline">View all projects</Link>
         </div>
-        <div className="grid gap-5 md:grid-cols-2">{featured.map((p) => <ProjectCard key={p.id} project={p} />)}</div>
+        <div className="grid gap-5 md:grid-cols-2">{featured.map((p) => <ProjectCard key={p.id} project={p} viewHref={`/projects?project=${encodeURIComponent(p.id)}`} />)}</div>
       </section>
 
       <section className="bg-white py-12">
@@ -76,7 +76,7 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-12">
-        <Callout tone="warn" title="Read this before exploring">
+        <Callout tone="neutral" title="Read this before exploring">
           {COPY.noGuarantee} {COPY.projectNotReturn} Exit, redemption and withdrawal are simulations only; a buyer or instant liquidity is never assumed. <Link href="/risk-disclosure" className="font-semibold underline">Read the risk disclosure</Link>.
         </Callout>
       </section>

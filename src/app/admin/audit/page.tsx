@@ -19,7 +19,7 @@ export default function AdminAudit() {
     <>
       <PageTitle title="Audit activity (demo)" subtitle="Local events for important actions in this browser session." />
       <DataTable caption="Audit events" rows={state.audit} columns={columns} rowKey={(a) => a.id} searchText={(a) => `${a.actor} ${a.action} ${a.entity} ${a.ref}`} pageSize={12} emptyTitle="No audit events" />
-      <Callout tone="warn" className="mt-4">This is a UI demonstration, not a tamper-proof audit system. A live product needs server-side, append-only audit storage.</Callout>
+      <Callout tone="neutral" className="mt-4">This is a UI demonstration, not a tamper-proof audit system. A live product needs server-side, append-only audit storage.</Callout>
     </>
   );
 }

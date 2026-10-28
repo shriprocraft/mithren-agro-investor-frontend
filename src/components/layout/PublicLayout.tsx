@@ -25,7 +25,7 @@ export function Logo({ light = false }: { light?: boolean }) {
 export function DemoBanner() {
   const { session } = useDemo();
   return (
-    <div className="bg-highlight px-4 py-2 text-center text-xs font-semibold text-brand-900" role="note">
+    <div className="border-b border-line bg-white px-4 py-2 text-center text-xs font-semibold text-brand-900" role="note">
       DEMO MODE — {COPY.demoShort}{session ? ` Signed in as demo ${session.role}.` : ""}
     </div>
   );

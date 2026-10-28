@@ -88,7 +88,7 @@ export function WorkspaceShell({ role, children }: { role: Role; children: React
           <nav aria-label="Investor navigation">{grouped}</nav>
         </aside>
         <div className="lg:pl-64">
-          <DemoBanner />
+          {!pathname.startsWith("/investor/bank-details") && <DemoBanner />}
           <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-3 border-b border-line bg-white px-4 py-2 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3">
               <button type="button" className="grid size-11 place-items-center rounded-control border border-line lg:hidden" aria-label={drawer ? "Close navigation" : "Open navigation"} aria-expanded={drawer} onClick={() => setDrawer(!drawer)}>

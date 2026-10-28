@@ -5,10 +5,10 @@ import { TX_STATUS_LABEL } from "@/config/demo-config";
 import type { CategoryId, TxEvent } from "@/types";
 
 const VISUAL: Record<CategoryId, { icon: LucideIcon; bg: string }> = {
-  crop_cultivation: { icon: Wheat, bg: "from-highlight/30 to-brand-200/60" },
+  crop_cultivation: { icon: Wheat, bg: "from-brand-100 to-brand-200/60" },
   dairy_farming: { icon: Milk, bg: "from-brand-50 to-brand-100" },
   fish_farming: { icon: Fish, bg: "from-brand-100 to-brand-200/50" },
-  poultry_farming: { icon: Bird, bg: "from-highlight/40 to-brand-50" },
+  poultry_farming: { icon: Bird, bg: "from-brand-100 to-brand-50" },
   biogas_composting: { icon: Sprout, bg: "from-brand-100 to-brand-200/60" },
   agri_forestry: { icon: Leaf, bg: "from-brand-200/70 to-brand-50" },
 };

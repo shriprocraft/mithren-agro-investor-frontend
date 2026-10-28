@@ -28,7 +28,7 @@ export const EvidenceBadge = ({ evidence }: { evidence: EvidenceLabel }) => (
 );
 
 export const ForecastTag = ({ kind }: { kind: "forecast" | "actual" | "demo" }) => (
-  <span className={cn("rounded px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide", kind === "actual" ? "bg-info-bg text-info-fg" : "bg-warn-bg text-warn-fg")}>
+  <span className={cn("rounded px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide", kind === "actual" ? "bg-info-bg text-info-fg" : "bg-neutral-bg text-neutral-fg")}>
     {kind === "forecast" ? "Forecast" : kind === "actual" ? "Actual (self-reported)" : "Demo data"}
   </span>
 );

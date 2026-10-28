@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { PageTitle, SelectField, Callout } from "@/components/common/ui";
 import { CurrencyAmount, TransactionStatusBadge } from "@/components/common/badges";
-import { DataTable, type Column } from "@/components/common/DataTable";
+import { DataTable, SearchInput, type Column } from "@/components/common/DataTable";
 import { TX_STATUS_LABEL } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { useInvestor } from "@/hooks/useInvestor";
@@ -17,7 +17,10 @@ export default function TransactionsPage() {
   const d = useInvestor();
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
-  const rows = d.transactions.filter((t) => (!type || t.type === type) && (!status || t.status === status));
+  const [query, setQuery] = useState("");
+  const searchText = (t: MockTransaction) => `${t.id} ${t.type} ${t.status} ${projectById(state, t.projectId ?? "")?.title ?? ""}`.toLowerCase();
+  const q = query.trim().toLowerCase();
+  const rows = d.transactions.filter((t) => (!type || t.type === type) && (!status || t.status === status) && (!q || searchText(t).includes(q)));
   const columns: Column<MockTransaction>[] = [
     { key: "ref", header: "Reference", sort: (t) => t.id, cell: (t) => <Link href={`/investor/transactions/${t.id}`} className="font-semibold text-brand-800 hover:underline">{t.id}</Link> },
     { key: "date", header: "Date", sort: (t) => t.createdAt, cell: (t) => formatDateTime(t.createdAt) },
@@ -29,11 +32,12 @@ export default function TransactionsPage() {
   return (
     <>
       <PageTitle title="Transactions" subtitle="All entries are simulated. Pending items are not settled." />
-      <div className="mb-4 grid gap-3 sm:grid-cols-3">
+      <div className="mb-4 grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,20rem)_minmax(0,20rem)_minmax(0,1fr)]">
         <SelectField label="Type" value={type} onChange={(e) => setType(e.target.value)}><option value="">All types</option><option value="investment">Investment</option><option value="exit">Exit</option><option value="withdrawal">Withdrawal</option></SelectField>
         <SelectField label="Status" value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All statuses</option>{Object.entries(TX_STATUS_LABEL).filter(([k]) => d.transactions.some((t) => t.status === k)).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</SelectField>
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1"><SearchInput value={query} onChange={setQuery} /></div>
       </div>
-      <DataTable caption="Transactions" rows={rows} columns={columns} rowKey={(t) => t.id} searchText={(t) => `${t.id} ${t.type} ${t.status} ${projectById(state, t.projectId ?? "")?.title ?? ""}`} emptyTitle="No transactions" emptyBody="Simulated investments, exits and withdrawals will appear here." />
+      <DataTable caption="Transactions" rows={rows} columns={columns} rowKey={(t) => t.id} emptyTitle="No transactions" emptyBody="Simulated investments, exits and withdrawals will appear here." />
       <Callout tone="info" className="mt-4">Refunds and reversals, when simulated, appear as new linked entries rather than edits to the original.</Callout>
     </>
   );

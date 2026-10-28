@@ -33,7 +33,7 @@ export default function ValuationHistoryPage() {
       <PageTitle title="Valuation history" subtitle={projectById(state, inv.projectId)?.title} />
       <ValuationChart points={pts} title="Sample estimated value" />
       <div className="mt-6"><DataTable caption="Valuation history table" rows={rows} columns={columns} rowKey={(r) => r.date + r.value} emptyTitle="No valuation history in the demo data" /></div>
-      <Callout tone="warn" className="mt-4">{DEMO_CONFIG.valuationMethodNote} The series is a small illustrative set, not live prices. Drops in value on partial-exit dates reflect the position getting smaller.</Callout>
+      <Callout tone="neutral" className="mt-4">{DEMO_CONFIG.valuationMethodNote} The series is a small illustrative set, not live prices. Drops in value on partial-exit dates reflect the position getting smaller.</Callout>
     </>
   );
 }

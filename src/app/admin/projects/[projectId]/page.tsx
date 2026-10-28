@@ -45,7 +45,7 @@ export default function AdminProjectReview() {
     <>
       <Breadcrumbs items={[{ label: "Review queue", href: "/admin/projects" }, { label: p.title }]} />
       <PageTitle title={p.title} subtitle={<span className="flex flex-wrap items-center gap-2"><ProjectStatusBadge status={p.status} /> {categoryLabel(p.category)} · {p.location} · Owner: {owner?.orgName ?? p.ownerId}</span>} />
-      <Callout tone="warn" className="mb-4">Decisions here are simulated. They do not constitute legal, compliance or due-diligence approval.</Callout>
+      <Callout tone="neutral" className="mb-4">Decisions here are simulated. They do not constitute legal, compliance or due-diligence approval.</Callout>
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
           <Card><h2 className="mb-3 text-lg font-bold text-brand-900">Submission</h2><p className="mb-3 text-sm">{p.summary}</p><DefList rows={[["Objective", p.objective || "—"], ["Production method", p.productionMethod], ["Certification statement", p.certification.note], ["Funding target (sample)", p.funding ? formatINR(p.funding.target) : "—"], ["District", p.district || "—"], ["Duration", `${durationLabel(p.durationMonths)} · ${p.season}`], ["Last updated", formatDateTime(p.updatedAt)]]} /></Card>

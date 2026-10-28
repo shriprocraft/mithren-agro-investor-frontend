@@ -32,8 +32,7 @@ export const WORKSPACE_NAV: Record<Role, NavItem[]> = {
     { href: "/investor/transactions", label: "Transactions", icon: Receipt },
     { href: "/investor/documents", label: "Documents", icon: FileText },
     { href: "/investor/notifications", label: "Notifications", icon: Bell },
-    { href: "/investor/verification", label: "Verification", icon: ShieldCheck },
-    { href: "/investor/bank-details", label: "Bank details", icon: Landmark },
+    { href: "/investor/bank-details", label: "Bank Details / Verification", icon: Landmark },
     { href: "/investor/profile", label: "Profile", icon: UserCog },
     { href: "/investor/support", label: "Help & support", icon: HelpCircle },
   ],
@@ -66,5 +65,5 @@ export const INVESTOR_NAV_GROUPS: { title: string; hrefs: string[] }[] = [
   { title: "Overview", hrefs: ["/investor/dashboard"] },
   { title: "Invest", hrefs: ["/projects", "/investor/watchlist", "/investor/portfolio"] },
   { title: "Money", hrefs: ["/investor/cash", "/investor/withdraw", "/investor/transactions"] },
-  { title: "Account", hrefs: ["/investor/documents", "/investor/notifications", "/investor/verification", "/investor/bank-details", "/investor/profile", "/investor/support"] },
+  { title: "Account", hrefs: ["/investor/documents", "/investor/notifications", "/investor/bank-details", "/investor/profile", "/investor/support"] },
 ];

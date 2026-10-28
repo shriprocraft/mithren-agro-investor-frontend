@@ -74,7 +74,7 @@ export default function InvestorOnboarding() {
           <input id="idfile" type="file" accept="image/*,.pdf" onChange={(x) => set("fileName", x.target.files?.[0]?.name ?? "")} className="block w-full text-sm" />
           {e.file && <p role="alert" className="text-xs font-medium text-bad-fg">{e.file}</p>}
           {f.fileName && <p className="text-sm text-muted">Selected: {f.fileName} (stays in your browser; nothing is uploaded or stored).</p>}
-          <Callout tone="warn">Do not choose real identity documents. Use any sample file.</Callout>
+          <Callout tone="neutral">Do not choose real identity documents. Use any sample file.</Callout>
         </>)}
         {step === 3 && (<>
           <TextField label="Account holder" value={f.holder} onChange={(x) => set("holder", x.target.value)} />
@@ -82,7 +82,7 @@ export default function InvestorOnboarding() {
           <TextField label="Masked account (fictional)" required value={f.masked} onChange={(x) => set("masked", x.target.value.toUpperCase())} error={e.masked} hint="Format: XXXX 1234. Never enter a real account number." />
         </>)}
         {step === 4 && (<><DefList rows={[["Name", f.name], ["Phone", f.phone], ["Location", `${f.city}, ${f.state} ${f.pin}`], ["Experience", f.experience], ["Identity file", f.fileName || "—"], ["Bank (masked)", f.masked]]} /><p className="text-sm text-muted">Submitting records a demo verification request. Go back to edit anything.</p></>)}
-        {step === 5 && (<div className="space-y-3" role="status"><h2 className="text-xl font-bold text-brand-900">Demo onboarding complete</h2><p className="text-sm text-muted">Current mock verification status: {user && <VerificationBadge status={user.verification} />}</p><p className="text-sm text-muted">An admin can approve this in the demo admin workspace. This is not a real identity check.</p><div className="flex gap-2"><LinkButton href="/investor/dashboard">Go to dashboard</LinkButton><LinkButton variant="secondary" href="/investor/verification">View checklist</LinkButton></div></div>)}
+        {step === 5 && (<div className="space-y-3" role="status"><h2 className="text-xl font-bold text-brand-900">Demo onboarding complete</h2><p className="text-sm text-muted">Current mock verification status: {user && <VerificationBadge status={user.verification} />}</p><p className="text-sm text-muted">An admin can approve this in the demo admin workspace. This is not a real identity check.</p><div className="flex gap-2"><LinkButton href="/investor/dashboard">Go to dashboard</LinkButton><LinkButton variant="secondary" href="/investor/bank-details#verification">View checklist</LinkButton></div></div>)}
         {step < 5 && (
           <div className="flex justify-between gap-2 pt-2"><Button variant="secondary" disabled={step === 0} onClick={() => { setE({}); setStep(step - 1); }}>Back</Button><div className="flex gap-2"><Button variant="ghost" onClick={() => router.push("/investor/dashboard")}>Skip for now</Button><Button onClick={next}>{step === 4 ? "Submit (demo)" : "Continue"}</Button></div></div>
         )}

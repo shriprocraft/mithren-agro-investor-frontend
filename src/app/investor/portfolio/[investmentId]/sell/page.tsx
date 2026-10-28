@@ -73,7 +73,7 @@ export default function SellPage() {
     <div className="max-w-3xl">
       <Breadcrumbs items={[{ label: "Portfolio", href: "/investor/portfolio" }, { label: inv.id, href: `/investor/portfolio/${inv.id}` }, { label: "Sell / redeem" }]} />
       <PageTitle title="Sell / redeem (simulated)" subtitle={p?.title} />
-      <Callout tone="warn" className="mb-4" title="This is a simulation">There is no guaranteed buyer, redemption, price or timing in a live product. Nothing here is a binding offer.</Callout>
+      <Callout tone="neutral" className="mb-4" title="This is a simulation">There is no guaranteed buyer, redemption, price or timing in a live product. Nothing here is a binding offer.</Callout>
       {err && <div role="alert" className="mb-4 rounded-card bg-bad-bg p-4 text-sm text-bad-fg">{err}</div>}
 
       {step === "choose" ? (

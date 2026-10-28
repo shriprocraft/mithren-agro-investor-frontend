@@ -38,7 +38,7 @@ export default function SupportPage() {
           <TextAreaField label="Message" required value={message} onChange={(e) => setMessage(e.target.value)} error={err.message} />
           <Button type="submit">Send (demo)</Button>
         </form>
-        <Callout tone="warn" className="mt-4">Do not include real personal or financial information.</Callout>
+        <Callout tone="neutral" className="mt-4">Do not include real personal or financial information.</Callout>
       </Card>
       <div>
         <h2 className="mb-3 text-lg font-bold text-brand-900">Your demo requests</h2>

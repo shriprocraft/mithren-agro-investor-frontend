@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useId, useState } from "react";
-import { Breadcrumbs, Button, Callout, Card, CheckField, DefList, EmptyState, LinkButton, PageTitle, TextField } from "@/components/common/ui";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useId, useState } from "react";
+import { Breadcrumbs, Button, Callout, Card, CheckField, DefList, EmptyState, LinkButton, LoadingPage, PageTitle, TextField } from "@/components/common/ui";
 import { ProjectImage } from "@/components/common/visuals";
 import { useToast } from "@/components/common/feedback";
 import { COPY, DEMO_CONFIG } from "@/config/demo-config";
@@ -15,14 +15,17 @@ import { projectById } from "@/lib/project-helpers";
 import { validateInvestmentAmount } from "@/lib/validation";
 import { VerificationBadge } from "@/components/common/badges";
 
-export default function InvestPage() {
+
+function InvestFlow() {
   const { projectId } = useParams<{ projectId: string }>();
   const { state, user, run } = useDemo();
   const router = useRouter();
   const toast = useToast();
   const [step, setStep] = useState<"amount" | "review">("amount");
-  const [raw, setRaw] = useState("");
-  const [touched, setTouched] = useState(false);
+  // Amount chosen on the Browse Projects panel; still fully re-validated below.
+  const prefill = useSearchParams().get("amount");
+  const [raw, setRaw] = useState(prefill && /^d+(.d{1,2})?$/.test(prefill) ? prefill : "");
+  const [touched, setTouched] = useState(Boolean(prefill));
   const [ack, setAck] = useState(false);
   const [ackError, setAckError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -79,7 +82,7 @@ export default function InvestPage() {
 
       {user && user.verification !== "approved_demo" && (
         <Callout tone="info" title="Demo verification incomplete" className="mb-4">
-          Your demo verification status is <VerificationBadge status={user.verification} />. Real eligibility rules are not implemented in this prototype, so you can continue — but a mock approval never authorises a real investment. <Link href="/investor/verification" className="font-semibold underline">Open verification checklist</Link>.
+          Your demo verification status is <VerificationBadge status={user.verification} />. Real eligibility rules are not implemented in this prototype, so you can continue — but a mock approval never authorises a real investment. <Link href="/investor/bank-details#verification" className="font-semibold underline">Open verification checklist</Link>.
         </Callout>
       )}
 
@@ -101,7 +104,7 @@ export default function InvestPage() {
               <div className="flex flex-wrap gap-2">{DEMO_CONFIG.quickAmounts.map((a) => (<Button key={a} variant="secondary" aria-pressed={raw === String(a)} onClick={() => { setRaw(String(a)); setTouched(true); }}>{formatINR(a)}{a === DEMO_CONFIG.testAmount ? " (test)" : ""}</Button>))}</div>
             </div>
             <DefList rows={[["Fees (illustrative)", "None configured in the demo"], ["Total payable (demo)", total === null ? "—" : formatINR(total)], ["What the amount represents", "Undecided — a simulated commitment only. No return is calculated."]]} />
-            <Callout tone="warn">₹100 is accepted here as a prototype test amount. It is not a statement that ₹100 is a legally valid minimum for a live product. {COPY.noGuarantee}</Callout>
+            <Callout tone="neutral">₹100 is accepted here as a prototype test amount. It is not a statement that ₹100 is a legally valid minimum for a live product. {COPY.noGuarantee}</Callout>
             <div className="flex flex-wrap justify-between gap-2"><LinkButton variant="secondary" href={`/projects/${p.id}`}>Cancel</LinkButton><Button onClick={goReview}>Review</Button></div>
           </div>
         </Card>
@@ -119,4 +122,8 @@ export default function InvestPage() {
       )}
     </div>
   );
+}
+
+export default function InvestPage() {
+  return <Suspense fallback={<LoadingPage />}><InvestFlow /></Suspense>;
 }

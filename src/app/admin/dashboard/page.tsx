@@ -34,7 +34,7 @@ export default function AdminDashboard() {
         <div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold text-brand-900">Recent audit events (demo)</h2><Link href="/admin/audit" className="text-sm font-semibold text-brand-700 hover:underline">All events</Link></div>
         <ul className="divide-y divide-line">{state.audit.slice(0, 6).map((a) => (<li key={a.id} className="py-2 text-sm"><span className="font-semibold">{a.action}</span> <span className="text-muted">· {a.entity} {a.ref} · {a.actor} · {formatDateTime(a.at)}</span></li>))}</ul>
       </Card>
-      <Callout tone="warn" className="mt-6">Every metric here is demo data. This console cannot move money or approve anything in the real world.</Callout>
+      <Callout tone="neutral" className="mt-6">Every metric here is demo data. This console cannot move money or approve anything in the real world.</Callout>
     </>
   );
 }

@@ -25,16 +25,16 @@ export default function ProfilePage() {
     toast("Profile saved (local demo data).", "ok");
   };
   return (
-    <div className="max-w-2xl">
-      <PageTitle title="Profile" subtitle={<>Verification: <VerificationBadge status={user.verification} /></>} />
-      <Card>
-        <form onSubmit={submit} noValidate className="space-y-4">
+    <div>
+      <PageTitle title="Profile" subtitle={<span className="flex items-center gap-2">Verification: <VerificationBadge status={user.verification} /></span>} />
+      <Card className="max-w-4xl p-6!">
+        <form onSubmit={submit} noValidate className="grid items-start gap-6 md:grid-cols-2">
           <TextField label="Full name" required value={f.name} onChange={(x) => setF({ ...f, name: x.target.value })} error={e.name} />
           <TextField label="Email" value={user.email} readOnly hint="Email cannot be changed in the demo." />
           <TextField label="Phone" type="tel" required value={f.phone} onChange={(x) => setF({ ...f, phone: x.target.value })} error={e.phone} />
           <TextField label="City" value={f.location} onChange={(x) => setF({ ...f, location: x.target.value })} />
-          <CheckField checked={f.alerts} onChange={(v) => setF({ ...f, alerts: v })}>Show email-style alerts in my notifications (nothing is actually emailed).</CheckField>
-          <Button type="submit">Save changes</Button>
+          <div className="md:col-span-2"><CheckField checked={f.alerts} onChange={(v) => setF({ ...f, alerts: v })}>Show email-style alerts in my notifications (nothing is actually emailed).</CheckField></div>
+          <div className="md:col-span-2"><Button type="submit">Save changes</Button></div>
         </form>
       </Card>
     </div>

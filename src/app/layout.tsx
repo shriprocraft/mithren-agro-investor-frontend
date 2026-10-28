@@ -10,7 +10,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { default: "Organic Agriculture Investment Platform (Demo)", template: "%s · Organic Agri Invest (Demo)" },
+  title: { default: "Mithren Agro Investor Portal (Demo)", template: "%s · Mithren Agro Investor Portal (Demo)" },
   description: "Frontend-only prototype. All data is fictional sample data; no real money moves.",
 };
 
