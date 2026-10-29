@@ -260,7 +260,7 @@ export function Tabs({ tabs, initial }: { tabs: { id: string; label: string; con
 export function Section({ title, children, defaultOpen = true, badge }: { title: string; children: ReactNode; defaultOpen?: boolean; badge?: ReactNode }) {
   return (
     <details open={defaultOpen} className="group rounded-card border border-line bg-white shadow-card transition-shadow duration-200 hover:border-brand-200 hover:shadow-hover">
-      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 rounded-card text-base font-semibold text-brand-900 hover:bg-brand-50 [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-12 cursor-pointer list-none flex-wrap items-center justify-between gap-x-3 gap-y-1 px-5 py-3 rounded-card text-base font-semibold text-brand-900 hover:bg-brand-50 [&::-webkit-details-marker]:hidden">
         <span>{title}</span>
         <span className="flex items-center gap-2">{badge}<ChevronRight className="size-4 transition-transform group-open:rotate-90" aria-hidden /></span>
       </summary>

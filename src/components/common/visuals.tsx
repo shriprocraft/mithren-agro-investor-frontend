@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import { Bird, Fish, Leaf, Milk, Sprout, Wheat, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatDate, formatDateTime } from "@/lib/format";
@@ -14,9 +18,17 @@ const VISUAL: Record<CategoryId, { icon: LucideIcon; bg: string }> = {
 };
 
 /** Illustrative placeholder (no photography supplied). Always carries alt text. */
-export function ProjectImage({ category, title, className }: { category: CategoryId; title: string; className?: string }) {
+export function ProjectImage({ category, title, className, src }: { category: CategoryId; title: string; className?: string; src?: string }) {
   const v = VISUAL[category];
   const Icon = v.icon;
+  const [failed, setFailed] = useState(false);
+  if (src && !failed) {
+    return (
+      <div className={cn("relative overflow-hidden bg-brand-50", className)}>
+        <Image src={src} alt={title} fill sizes="(min-width: 1024px) 360px, 100vw" className="object-cover" onError={() => setFailed(true)} />
+      </div>
+    );
+  }
   return (
     <div role="img" aria-label={`Illustration for ${title} (placeholder artwork)`} className={cn("relative grid place-items-center overflow-hidden bg-gradient-to-br", v.bg, className)}>
       <Icon className="size-1/3 min-h-10 min-w-10 text-brand-700/70 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.25} aria-hidden />

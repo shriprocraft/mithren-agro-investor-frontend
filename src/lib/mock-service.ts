@@ -18,7 +18,7 @@ import type {
 } from "@/types";
 import { canTransition } from "./mock-transitions";
 import { cashSummary, exitPreview, isOpenExit } from "./portfolio-calculations";
-import { validateExitAmount, validateInvestmentAmount, validateWithdrawalAmount } from "./validation";
+import { parseAmount, validateExitAmount, validateInvestmentAmount, validateWithdrawalAmount } from "./validation";
 
 /**
  * Frontend-only "service layer". Every function is pure: (state, input) → new state.
@@ -493,3 +493,41 @@ export function resolveReconException(state: DemoState, id: string, actor: Actor
   return ok(s, undefined);
 }
 
+
+/* ===================== Enquiries ===================== */
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^\+?[\d\s-]{10,15}$/;
+
+export type EnquiryInput = {
+  userId: string | null;
+  name: string;
+  contact: string;
+  projectId: string | null;
+  categoryId: string | null;
+  planId: string | null;
+  /** Raw typed amount; blank means "no preference". */
+  amount: string;
+  message: string;
+};
+
+/** Validates and records an enquiry in demo state. Real delivery needs a backend endpoint (none exists yet). */
+export function addEnquiry(state: DemoState, input: EnquiryInput): ServiceResult<string> {
+  const name = input.name.trim();
+  const contact = input.contact.trim();
+  const message = input.message.trim();
+  if (name.length < 2) return fail("Enter your name.");
+  if (!EMAIL_RE.test(contact) && !PHONE_RE.test(contact)) return fail("Enter a valid email address or phone number.");
+  if (message.length > 1000) return fail("Keep the message under 1,000 characters.");
+  let amount: number | null = null;
+  if (input.amount.trim() !== "") {
+    const p = parseAmount(input.amount);
+    if (!p.ok) return fail(p.error);
+    amount = p.value;
+  }
+  if (input.projectId && !state.projects.some((p) => p.id === input.projectId)) return fail("Selected project was not found.");
+  const categoryId = CATEGORIES.find((c) => c.id === input.categoryId)?.id ?? null;
+  const m = mint(state, "ENQ");
+  const enquiry = { id: m.id, userId: input.userId, name, contact, projectId: input.projectId, categoryId, planId: input.planId, amount, message, at: nowIso() };
+  return ok({ ...m.state, enquiries: [enquiry, ...(m.state.enquiries ?? [])] }, m.id);
+}

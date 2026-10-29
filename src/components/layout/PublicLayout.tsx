@@ -12,12 +12,12 @@ import { cn } from "@/lib/cn";
 import { LinkButton } from "@/components/common/ui";
 import { HeaderActions } from "./HeaderActions";
 
-/** Brand logo (public/logo.png, trimmed from the supplied artwork). Multiply-blend lets its white background
+/** Brand logo (public/mithren-agro-logo.png, trimmed from the supplied artwork). Multiply-blend lets its white background
  *  take on the page colour; on the dark footer it sits on a white pill instead. */
 export function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link href="/" aria-label="Mithren Agro Pvt. Ltd. — home" className={cn("inline-flex shrink-0 items-center", light && "rounded-control bg-white px-3 py-2")}>
-      <Image src="/logo.png" alt="Mithren Agro Pvt. Ltd." width={1394} height={648} priority className={cn("h-12 w-auto sm:h-14", !light && "mix-blend-multiply")} />
+      <Image src="/mithren-agro-logo.png" alt="Mithren Agro Pvt. Ltd." width={1439} height={607} priority className={cn("h-12 w-auto object-contain sm:h-14", !light && "mix-blend-multiply")} />
     </Link>
   );
 }

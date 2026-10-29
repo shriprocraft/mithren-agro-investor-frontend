@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createSeedState } from "@/data/seed";
+import { createSeedState as createCatalogueState } from "@/data/seed";
 import {
   createExitRequest, createInvestment, createWithdrawal, projectCompleteness, registerUser, reviewProject, runReconciliation,
   saveProjectDraft, submitProject, transitionExit, transitionWithdrawal, applyValuationUpdate,
@@ -7,6 +7,26 @@ import {
 import { canTransition, EXIT_TRANSITIONS, TERMINAL, WITHDRAWAL_TRANSITIONS } from "@/lib/mock-transitions";
 import { cashSummary } from "@/lib/portfolio-calculations";
 import type { DemoState, ServiceResult } from "@/types";
+
+/**
+ * The shipped catalogue is enquiry-only (no verified figures), so lifecycle tests build their own
+ * fixtures: an investable funded project (p-1), a closed one (p-4), an unpublished draft (p-7) and a submission (p-8).
+ */
+function createSeedState(): DemoState {
+  const s = createCatalogueState();
+  const patch = (id: string, change: Partial<DemoState["projects"][number]>) => {
+    s.projects = s.projects.map((p) => (p.id === id ? { ...p, ...change } : p));
+  };
+  const analysis = {
+    asOf: "2026-10-02", reviewedBy: "Demo Reviewer", plannedQty: 18000, qtyUnit: "kg", lossRatePct: 8, pricePerUnit: 28, salesDeductionPct: 6,
+    costs: [{ id: "c1", label: "Seedlings", amount: 42000, kind: "opex" as const, basis: "quoted" as const }], assumptions: [],
+  };
+  patch("p-1", { funding: { target: 360000, raised: 241000 }, analysis, demoConfig: { investable: true, minAmount: 100, maxAmount: 50000 } });
+  patch("p-4", { funding: { target: 420000, raised: 420000 }, analysis, demoConfig: { investable: false, notInvestableReason: "Funding target reached (demo).", minAmount: 100, maxAmount: 50000 } });
+  patch("p-7", { status: "draft", district: "", analysis: null });
+  patch("p-8", { status: "submitted", district: "Erode", analysis, funding: { target: 280000, raised: 0 } });
+  return s;
+}
 
 const must = <R>(r: ServiceResult<R>): { state: DemoState; data: R } => {
   if (!r.ok) throw new Error(r.error);

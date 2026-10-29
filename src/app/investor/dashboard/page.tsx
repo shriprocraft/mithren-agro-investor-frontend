@@ -7,6 +7,8 @@ import {
   PerformanceAnalytics, PortfolioAllocation, PortfolioChartCard, PrimaryCards, RecentActivity, SmartAgricultureCard, UpcomingMilestones,
   type ActivityRow, type Health, type MilestoneRow,
 } from "@/components/dashboard/sections";
+import { ContributionPlans } from "@/components/plans/ContributionPlans";
+import { ProjectCatalogue } from "@/components/plans/ProjectCatalogue";
 import { COPY, durationLabel } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { useInvestor } from "@/hooks/useInvestor";
@@ -115,6 +117,10 @@ export default function InvestorDashboard() {
           <RecentActivity items={v.activity} />
           <HealthIndicators items={v.health} attention={v.attention} />
         </aside>
+      </div>
+      <div className="mx-auto mt-10 max-w-[1500px] space-y-12">
+        <ContributionPlans />
+        <ProjectCatalogue />
       </div>
       <Callout tone="neutral" className="mx-auto mt-6 max-w-[1500px]">Demo data. {COPY.noGuarantee}</Callout>
     </div>

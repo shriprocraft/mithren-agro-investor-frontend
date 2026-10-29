@@ -4,7 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, FileSearch, LineChart, Search, Wallet } from "lucide-react";
 import { Callout, LinkButton, Card } from "@/components/common/ui";
-import { ProjectCard } from "@/components/projects/ProjectCard";
+import { ContributionPlans } from "@/components/plans/ContributionPlans";
+import { ProjectCatalogue } from "@/components/plans/ProjectCatalogue";
 import { CATEGORIES, COPY } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { publishedProjects } from "@/lib/project-helpers";
@@ -19,7 +20,6 @@ const STEPS = [
 
 export default function HomePage() {
   const { state } = useDemo();
-  const featured = publishedProjects(state).filter((p) => p.featured);
   const published = publishedProjects(state);
   return (
     <>
@@ -34,24 +34,24 @@ export default function HomePage() {
               <LinkButton href="/how-it-works" variant="secondary" className="min-h-12 px-6">How it works</LinkButton>
             </div>
           </motion.div>
-          <Card className="md:col-span-2">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Demo catalogue at a glance <span className="ml-1 rounded bg-neutral-bg px-1.5 py-0.5 text-[11px] text-neutral-fg">SAMPLE</span></h2>
-            <dl className="mt-3 grid grid-cols-2 gap-4">
-              <div><dt className="text-xs text-muted">Listed projects</dt><dd className="tabular text-3xl font-bold text-brand-900">{published.length}</dd></div>
-              <div><dt className="text-xs text-muted">Categories supported</dt><dd className="tabular text-3xl font-bold text-brand-900">{CATEGORIES.length}</dd></div>
+          <Card className="self-center md:col-span-2">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Demo catalogue at a glance</h2>
+              <span className="shrink-0 rounded bg-neutral-bg px-1.5 py-0.5 text-[11px] text-neutral-fg">SAMPLE</span>
+            </div>
+            <dl className="mt-4 grid grid-cols-2 items-start gap-4">
+              <div className="min-w-0"><dt className="text-xs leading-4 text-muted">Listed projects</dt><dd className="tabular mt-1 text-3xl font-bold leading-none text-brand-900">{published.length}</dd></div>
+              <div className="min-w-0"><dt className="text-xs leading-4 text-muted">Categories supported</dt><dd className="tabular mt-1 text-3xl font-bold leading-none text-brand-900">{CATEGORIES.length}</dd></div>
             </dl>
-            <p className="mt-3 text-xs text-muted">These are counts of fictional demo records, not platform performance claims.</p>
+            <p className="mt-4 text-xs text-muted">These are counts of fictional demo records, not platform performance claims.</p>
           </Card>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="mb-6 flex items-end justify-between gap-3">
-          <h2 className="text-2xl font-bold text-brand-900">Featured projects</h2>
-          <Link href="/projects" className="text-sm font-semibold text-brand-700 hover:underline">View all projects</Link>
-        </div>
-        <div className="grid gap-5 md:grid-cols-2">{featured.map((p) => <ProjectCard key={p.id} project={p} viewHref={`/projects?project=${encodeURIComponent(p.id)}`} />)}</div>
-      </section>
+      <div className="mx-auto max-w-6xl space-y-12 px-4 py-12">
+        <ContributionPlans />
+        <ProjectCatalogue />
+      </div>
 
       <section className="bg-white py-12">
         <div className="mx-auto max-w-6xl px-4">
@@ -66,13 +66,6 @@ export default function HomePage() {
             ))}
           </ol>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="mb-4 text-2xl font-bold text-brand-900">Agriculture categories</h2>
-        <ul className="flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => (<li key={c.id}><Link href={`/projects?category=${c.id}`} className="inline-flex min-h-11 items-center rounded-full border border-line bg-white px-4 text-sm font-semibold hover:bg-brand-50">{c.label}</Link></li>))}
-        </ul>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-12">

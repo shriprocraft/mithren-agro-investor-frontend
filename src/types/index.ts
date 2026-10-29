@@ -163,6 +163,13 @@ export type Project = {
   updates: ProjectUpdate[];
   documentTitles: string[];
   reviewComments: ReviewComment[];
+  /** Catalogue fields (optional so records saved before the 12-project catalogue still load). */
+  slug?: string;
+  /** Public path under /public, e.g. "/projects/organic-vegetable-cultivation.jpg". Falls back to placeholder artwork. */
+  image?: string;
+  activities?: string[];
+  fullDescription?: string;
+  objectives?: string[];
 };
 
 /* ---------- Investments, valuations, transactions ---------- */
@@ -317,6 +324,20 @@ export type SupportTicket = {
   at: string;
 };
 
+export type Enquiry = {
+  id: string;
+  /** null when submitted by a visitor who is not signed in. */
+  userId: string | null;
+  name: string;
+  contact: string;
+  projectId: string | null;
+  categoryId: CategoryId | null;
+  planId: string | null;
+  amount: number | null;
+  message: string;
+  at: string;
+};
+
 export type DemoState = {
   version: number;
   seq: number;
@@ -333,6 +354,8 @@ export type DemoState = {
   audit: AuditEvent[];
   recon: ReconEntry[];
   tickets: SupportTicket[];
+  /** Contribution / project enquiries. Optional: absent in states saved before enquiries existed. */
+  enquiries?: Enquiry[];
   watchlist: Record<string, string[]>;
 };
 
