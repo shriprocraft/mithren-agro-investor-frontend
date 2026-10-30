@@ -102,14 +102,6 @@ export default function InvestorDashboard() {
           <PrimaryCards s={d.summary} />
           <PortfolioChartCard points={v.points} range={range} onRange={setRange} minInvestment={v.minInvestment} fundingTarget={v.fundingTarget} duration={v.duration} />
           <AdditionalStats realised={v.realised} withdrawn={v.withdrawnAll} pending={v.pendingReq} avg={v.avg} />
-          <InvestmentsTable rows={v.rows} />
-          <PerformanceAnalytics range={range} total={v.total} realised={v.realised} unrealised={d.summary.gain} growth={v.growth} best={v.best} worst={v.worst} />
-          <div className="grid gap-5 2xl:grid-cols-2">
-            <PortfolioAllocation data={v.alloc} />
-            <InvestmentActivity series={v.series} />
-          </div>
-          <CashFlowOverview range={range} deposits={v.flow.deposits} withdrawn={v.flow.withdrawn} withdrawnCount={v.flow.withdrawnCount} net={v.flow.net} pendingWithdrawals={d.cash.pendingWithdrawals} available={d.cash.available} pendingProceeds={d.cash.pendingProceeds} />
-          <InvestmentImpact projects={v.impact.projects} contributed={v.impact.contributed} target={v.impact.target} pct={v.impact.pct} />
         </div>
         <aside className="min-w-0 space-y-5" aria-label="Milestones and activity">
           <UpcomingMilestones items={v.milestones.slice(0, 5)} />
@@ -117,6 +109,17 @@ export default function InvestorDashboard() {
           <RecentActivity items={v.activity} />
           <HealthIndicators items={v.health} attention={v.attention} />
         </aside>
+      </div>
+      {/* Detail sections use the full width: beside the short sidebar they left a large empty right-hand column. */}
+      <div className="mx-auto mt-5 max-w-[1500px] space-y-5">
+        <InvestmentsTable rows={v.rows} />
+        <PerformanceAnalytics range={range} total={v.total} realised={v.realised} unrealised={d.summary.gain} growth={v.growth} best={v.best} worst={v.worst} />
+        <div className="grid gap-5 xl:grid-cols-2">
+          <PortfolioAllocation data={v.alloc} />
+          <InvestmentActivity series={v.series} />
+        </div>
+        <CashFlowOverview range={range} deposits={v.flow.deposits} withdrawn={v.flow.withdrawn} withdrawnCount={v.flow.withdrawnCount} net={v.flow.net} pendingWithdrawals={d.cash.pendingWithdrawals} available={d.cash.available} pendingProceeds={d.cash.pendingProceeds} />
+        <InvestmentImpact projects={v.impact.projects} contributed={v.impact.contributed} target={v.impact.target} pct={v.impact.pct} />
       </div>
       <div className="mx-auto mt-10 max-w-[1500px] space-y-12">
         <ContributionPlans />

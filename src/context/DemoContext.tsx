@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createSeedState, STATE_VERSION } from "@/data/seed";
+import { DEMO_CREDENTIALS, LEGACY_DEMO_EMAIL } from "@/data/users";
 import { normalizeProject } from "@/lib/project-helpers";
 import type { Actor } from "@/lib/mock-service";
 import type { DemoState, DemoUser, MockSession, ServiceResult } from "@/types";
@@ -57,7 +58,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(raw) as DemoState;
         if (parsed.version === STATE_VERSION) {
-          const migrated = { ...parsed, projects: parsed.projects.map(normalizeProject) };
+          // The seeded investor's login email changed; carry saved browsers over so the shown demo credentials work.
+          const users = parsed.users.map((u) => (u.id === "inv-1" && u.email === LEGACY_DEMO_EMAIL ? { ...u, email: DEMO_CREDENTIALS.email } : u));
+          const migrated = { ...parsed, users, projects: parsed.projects.map(normalizeProject) };
           stateRef.current = migrated;
           setState(migrated);
         }
@@ -84,12 +87,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginAs = useCallback((userId: string) => {
+    if (stateRef.current.users.find((x) => x.id === userId)?.role !== "investor") return;
     setSessionUserId(userId);
     safeSet(SESSION_KEY, userId);
   }, []);
 
   const loginWithEmail = useCallback((email: string) => {
-    const u = stateRef.current.users.find((x) => x.email.toLowerCase() === email.trim().toLowerCase()) ?? null;
+    const u = stateRef.current.users.find((x) => x.role === "investor" && x.email.toLowerCase() === email.trim().toLowerCase()) ?? null;
     if (u) {
       setSessionUserId(u.id);
       safeSet(SESSION_KEY, u.id);
@@ -108,7 +112,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setState(seed);
   }, []);
 
-  const user = useMemo(() => state.users.find((u) => u.id === sessionUserId) ?? null, [state.users, sessionUserId]);
+  const user = useMemo(() => state.users.find((u) => u.id === sessionUserId && u.role === "investor") ?? null, [state.users, sessionUserId]);
   const session = useMemo<MockSession | null>(
     () => (user ? { userId: user.id, name: user.name, email: user.email, role: user.role, isDemo: true } : null),
     [user],

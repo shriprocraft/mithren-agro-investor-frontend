@@ -33,23 +33,27 @@ export function ProjectBrowser({ all, results, filters, onChange, selectedId, lo
   onSelect?: (p: Project) => void;
 }) {
   const [more, setMore] = useState(false);
+  const asideRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   // Bring the open project into view inside the list (without scrolling the page).
   useEffect(() => {
-    const list = listRef.current;
-    const cur = list?.querySelector<HTMLElement>("[aria-current=page]");
-    if (list && cur) list.scrollTop = Math.max(0, cur.offsetTop - list.clientHeight / 2 + cur.clientHeight / 2);
+    const box = asideRef.current;
+    const cur = listRef.current?.querySelector<HTMLElement>("[aria-current=page]");
+    if (!box || !cur) return;
+    const b = box.getBoundingClientRect(), c = cur.getBoundingClientRect();
+    if (c.top >= b.top && c.top < b.bottom - 24) return; // already starts in view: keep the filters at the top
+    box.scrollTop = Math.max(0, box.scrollTop + c.top - b.top - box.clientHeight / 2 + c.height / 2);
   }, [selectedId, loading]);
   const set = <K extends keyof BrowseFilters>(k: K, v: BrowseFilters[K]) => onChange({ ...filters, [k]: v });
   const extra = activeExtraFilters(filters);
   const clearExtra = () => onChange(clearMoreFilters(filters));
 
   return (
-    <aside aria-label="Browse projects" className={cn("flex min-w-0 flex-col overflow-hidden rounded-card border border-line bg-white shadow-card", className)}>
-      <div className="space-y-3 border-b border-line p-4">
+    <aside ref={asideRef} aria-label="Browse projects" className={cn("flex min-w-0 flex-col overflow-x-hidden rounded-card border border-line bg-white shadow-card", className)}>
+      <div className="shrink-0 space-y-2.5 border-b border-line p-3.5">
         <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0"><h2 className="text-lg font-bold text-ink">Browse Projects</h2><p className="text-xs text-muted">Discover agricultural investment opportunities.</p></div>
-          <span className="shrink-0 text-right text-xs text-muted" aria-live="polite">{loading ? "…" : `${results.length} project${results.length === 1 ? "" : "s"}`}</span>
+          <div className="min-w-0"><h2 className="text-lg font-bold text-ink">Browse Projects</h2><p className="text-sm text-muted">Discover agricultural investment opportunities.</p></div>
+          <span className="shrink-0 text-right text-sm font-semibold text-muted" aria-live="polite">{loading ? "…" : `${results.length} project${results.length === 1 ? "" : "s"}`}</span>
         </div>
 
         <label className="relative block"><span className="sr-only">Search projects, crops, locations</span>
@@ -58,21 +62,26 @@ export function ProjectBrowser({ all, results, filters, onChange, selectedId, lo
           {filters.q && <button type="button" aria-label="Clear search" onClick={() => set("q", "")} className="absolute right-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded text-muted hover:text-ink"><X className="size-4" aria-hidden /></button>}
         </label>
 
-        <FilterSelect label="Sort by" value={filters.sort} onChange={(v) => set("sort", v as SortKey)}>
-          {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </FilterSelect>
+        <label className="flex items-center gap-3 text-sm font-semibold text-ink"><span className="shrink-0">Sort by</span>
+          <select value={filters.sort} onChange={(e) => set("sort", e.target.value as SortKey)} className={cn(sel, "min-w-0 flex-1 font-normal")}>
+            {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </label>
 
         <div role="group" aria-label="Category" className="flex flex-wrap gap-1.5">
           {([{ id: "", label: "All" }, ...CATEGORIES] as { id: CategoryId | ""; label: string }[]).map((c) => (
             <button key={c.id || "all"} type="button" aria-pressed={filters.category === c.id} onClick={() => set("category", c.id)}
-              className={cn("min-h-8 rounded-full border px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-brand-600", filters.category === c.id ? "border-brand-600 bg-brand-600 text-white" : "border-brand-600/50 bg-white text-brand-800 hover:bg-brand-50")}>{c.label}</button>
+              className={cn("min-h-8 rounded-full border px-3 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-brand-600", filters.category === c.id ? "border-brand-600 bg-brand-600 text-white" : "border-brand-600/50 bg-white text-brand-800 hover:bg-brand-50")}>{c.label}</button>
           ))}
         </div>
 
         <div>
+          <div className="flex items-center justify-between gap-3">
           <button type="button" aria-expanded={more} aria-controls="more-filters" onClick={() => setMore(!more)} className="inline-flex min-h-8 items-center gap-1.5 text-xs font-semibold text-muted hover:text-ink">
             <ChevronRight className={cn("size-3.5 transition-transform", more && "rotate-90")} aria-hidden />More filters{extra > 0 ? ` (${extra})` : ""}
           </button>
+          {!loading && !error && <p className="text-sm text-muted" role="status">Showing {results.length} of {all.length}</p>}
+          </div>
           <div className={cn("grid transition-[grid-template-rows,opacity] duration-200 ease-out", more ? "mt-2 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
             <div id="more-filters" inert={!more} className="min-h-0 overflow-hidden">
               <div className="grid gap-3 p-0.5">
@@ -96,10 +105,9 @@ export function ProjectBrowser({ all, results, filters, onChange, selectedId, lo
             </div>
           </div>
         </div>
-        {!loading && !error && <p className="text-xs text-muted" role="status">Showing {results.length} of {all.length} project{all.length === 1 ? "" : "s"}</p>}
       </div>
 
-      <div ref={listRef} className="relative max-h-[28rem] min-h-0 flex-1 overflow-y-auto lg:max-h-none" aria-label="Project list" tabIndex={-1}>
+      <div ref={listRef} className="shrink-0" aria-label="Project list">
         {error ? <div className="p-4"><ErrorState title="Could not load projects" body={error} /></div>
           : loading ? <div className="space-y-3 p-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)}</div>
           : all.length === 0 ? <div className="p-4"><EmptyState title="No projects available" body="No projects have been published yet." /></div>
@@ -113,10 +121,10 @@ export function ProjectBrowser({ all, results, filters, onChange, selectedId, lo
                 return (
                   <li key={p.id}>
                     <Link href={hrefFor ? hrefFor(p) : `/projects/${p.id}`} scroll={false} onClick={() => onSelect?.(p)} aria-current={on ? "page" : undefined}
-                      className={cn("flex gap-3 border-l-[3px] px-3 py-3 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-600", on ? "border-brand-600 bg-[#E3F4E6]" : "border-transparent hover:bg-brand-50")}>
-                      <ProjectImage category={p.category} title={p.title} src={p.image} className="size-16 shrink-0 rounded-lg" />
-                      <span className="min-w-0 flex-1 space-y-0.5 text-xs text-muted">
-                        <span className="block truncate text-sm font-semibold text-ink">{p.title}</span>
+                      className={cn("flex gap-3 border-l-[3px] px-4 py-3.5 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-600", on ? "border-brand-600 bg-[#E3F4E6]" : "border-transparent hover:bg-brand-50")}>
+                      <ProjectImage category={p.category} title={p.title} src={p.image} className="size-20 shrink-0 rounded-lg" />
+                      <span className="min-w-0 flex-1 space-y-0.5 text-[13px] text-muted">
+                        <span className="block truncate text-base font-semibold text-ink">{p.title}</span>
                         <span className="block truncate">{[p.district, p.location].filter(Boolean).join(", ")}</span>
                         <span className="block truncate">{p.crop} · {categoryLabel(p.category)}</span>
                         <span className="tabular block truncate">From {formatINR(p.demoConfig.minAmount)} · {durationText(p.durationMonths)} · <span className={cn("font-semibold", status === "Open" || status === "Funding in Progress" ? "text-brand-700" : "text-ink")}>{status}</span></span>

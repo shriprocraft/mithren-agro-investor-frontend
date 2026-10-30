@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
-import { LinkButton, LoadingPage, EmptyState } from "@/components/common/ui";
-import { INVESTOR_NAV_GROUPS, type NavItem, ROLE_HOME, ROLE_LABEL, WORKSPACE_NAV } from "@/config/navigation";
+import { LinkButton, LoadingPage, EmptyState, Skeleton } from "@/components/common/ui";
+import { InvestorRouteSkeleton } from "@/components/common/skeletons";
+import { INVESTOR_NAV, INVESTOR_NAV_GROUPS, type NavItem } from "@/config/navigation";
 import { useDemo } from "@/context/DemoContext";
 import { cn } from "@/lib/cn";
-import type { Role } from "@/types";
 import { HeaderActions } from "./HeaderActions";
 import { DemoBanner, Logo } from "./PublicLayout";
 
-/** Role-aware shell. The role guard is a UI convenience only — real authorization must be server-side. */
-export function WorkspaceShell({ role, children }: { role: Role; children: ReactNode }) {
+/** Investor workspace shell. The role guard is a UI convenience only — real authorization must be server-side. */
+export function WorkspaceShell({ children }: { children: ReactNode }) {
   const { ready, session } = useDemo();
   const router = useRouter();
   const pathname = usePathname();
@@ -25,40 +25,26 @@ export function WorkspaceShell({ role, children }: { role: Role; children: React
     if (ready && !session) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
   }, [ready, session, router, pathname]);
 
-  if (!ready || !session) return <LoadingPage label="Checking demo session…" />;
-  if (session.role !== role) {
+  // While the demo store hydrates, keep the static chrome and show a skeleton of the requested page.
+  const loading = !ready;
+  if (ready && !session) return <LoadingPage label="Redirecting to log in…" />;
+  if (session && session.role !== "investor") {
     return (
       <div className="mx-auto max-w-lg p-6">
         <EmptyState
-          title={`This area is for ${ROLE_LABEL[role].toLowerCase()} accounts`}
-          body={`You are signed in as a demo ${ROLE_LABEL[session.role].toLowerCase()}. Use the account menu to switch demo role, or go to your own workspace.`}
-          action={<LinkButton href={ROLE_HOME[session.role]}>Go to my workspace</LinkButton>}
+          title="This area is for investor accounts"
+          body="Sign in with an investor demo account to continue."
+          action={<LinkButton href="/login">Log in</LinkButton>}
         />
       </div>
     );
   }
 
-  const nav = WORKSPACE_NAV[role];
-  // Longest matching nav href wins, so /owner/projects/new does not also highlight /owner/projects.
+  const nav = INVESTOR_NAV;
+  // Longest matching nav href wins, so a nested route highlights only its own nav item.
   const best = nav.filter((n) => pathname === n.href || pathname.startsWith(n.href + "/")).sort((a, b) => b.href.length - a.href.length)[0]?.href;
   const isActive = (href: string) => href === best;
-  const list = (
-    <ul className="space-y-1">
-      {nav.map((n) => {
-        const active = isActive(n.href);
-        return (
-          <li key={n.href}>
-            <Link href={n.href} aria-current={active ? "page" : undefined} className={cn("flex min-h-11 items-center gap-3 rounded-control px-3 text-sm font-semibold", active ? "bg-brand-600 text-white" : "text-ink hover:bg-brand-50")}>
-              <n.icon className="size-4 shrink-0" aria-hidden /> {n.label}
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
-  );
-
-  if (role === "investor") {
-    const grouped = (
+  const grouped = (
       <div className="space-y-5">
         {INVESTOR_NAV_GROUPS.map((g) => (
           <div key={g.title}>
@@ -95,42 +81,17 @@ export function WorkspaceShell({ role, children }: { role: Role; children: React
                 {drawer ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
               </button>
               <span className="lg:hidden"><Logo /></span>
-              <span className="hidden rounded-full bg-brand-100 px-2.5 py-1 text-xs font-bold text-brand-800 sm:inline">{ROLE_LABEL[role]} workspace</span>
+              <span className="hidden rounded-full bg-brand-100 px-2.5 py-1 text-xs font-bold text-brand-800 sm:inline">Investor workspace</span>
             </div>
-            <HeaderActions />
+            {loading ? (
+              <div aria-hidden className="flex items-center gap-2 sm:gap-4"><Skeleton className="h-[3.25rem] w-[8.75rem] rounded-full" /><Skeleton className="size-12 rounded-full" /></div>
+            ) : <HeaderActions />}
             {drawer && (
               <nav aria-label="Investor navigation" className="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-white p-4 shadow-card lg:hidden">{grouped}</nav>
             )}
           </header>
-          <main id="main" className="min-w-0 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+          <main id="main" className="min-w-0 px-4 py-6 sm:px-6 lg:px-8">{loading ? <InvestorRouteSkeleton /> : children}</main>
         </div>
       </div>
     );
-  }
-
-  return (
-    <div className="min-h-dvh bg-white">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:p-3">Skip to content</a>
-      <DemoBanner />
-      <header className="sticky top-0 z-30 flex h-[4.5rem] items-center justify-between gap-3 border-b border-line bg-white px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-3">
-          <button type="button" className="grid size-11 place-items-center rounded-control border border-line lg:hidden" aria-label={drawer ? "Close navigation" : "Open navigation"} aria-expanded={drawer} onClick={() => setDrawer(!drawer)}>
-            {drawer ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
-          </button>
-          <Logo />
-          <span className="hidden rounded-full bg-brand-100 px-2.5 py-1 text-xs font-bold text-brand-800 sm:inline">{ROLE_LABEL[role]} workspace</span>
-        </div>
-        <HeaderActions />
-        {drawer && (
-          <nav aria-label={`${ROLE_LABEL[role]} navigation`} className="absolute inset-x-0 top-full max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b border-line bg-white p-4 shadow-card lg:hidden">{list}</nav>
-        )}
-      </header>
-      <div className="flex">
-        <aside className="sticky top-[4.5rem] hidden h-[calc(100dvh-4.5rem)] w-60 shrink-0 overflow-y-auto border-r border-line p-4 lg:block">
-          <nav aria-label={`${ROLE_LABEL[role]} navigation`}>{list}</nav>
-        </aside>
-        <main id="main" className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
-      </div>
-    </div>
-  );
 }

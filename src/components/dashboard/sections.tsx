@@ -21,7 +21,7 @@ import type { MockInvestment, MockTransaction, Project } from "@/types";
 export function Panel({ title, action, children, className, id }: { title?: string; action?: ReactNode; children: ReactNode; className?: string; id?: string }) {
   return (
     <section id={id} aria-label={title} className={cn("min-w-0 rounded-card border border-line bg-white p-4 shadow-sm sm:p-5", className)}>
-      {title && <div className="mb-3 flex items-center justify-between gap-3"><h2 className="text-base font-bold text-ink">{title}</h2>{action}</div>}
+      {title && <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2"><h2 className="text-base font-bold text-ink">{title}</h2>{action}</div>}
       {children}
     </section>
   );

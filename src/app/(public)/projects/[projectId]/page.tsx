@@ -5,11 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Copy, FileText, Heart } from "lucide-react";
 import { DemoDocumentPreview, useToast } from "@/components/common/feedback";
-import { Badge, Breadcrumbs, Button, Callout, Card, DefList, EmptyState, LinkButton, LoadingPage, ProgressBar, Section } from "@/components/common/ui";
+import { Badge, Breadcrumbs, Button, Callout, Card, DefList, EmptyState, LinkButton, ProgressBar, Section } from "@/components/common/ui";
 import { ProjectBrowser } from "@/components/projects/ProjectBrowser";
 import { browse, DEFAULT_FILTERS, type BrowseFilters } from "@/lib/project-browse";
 import { publishedProjects } from "@/lib/project-helpers";
 import { EnquiryModal } from "@/components/plans/EnquiryModal";
+import { ProjectDetailSkeleton } from "@/components/common/skeletons";
 import { HBarChart, MultiLineChart, SERIES_COLORS } from "@/components/projects/dashboard-charts";
 import { MockStatusBadge } from "@/components/projects/MockStatusBadge";
 import { activitiesFor, MOCK_LABEL, mockFor, MONTHS, OPERATIONAL_REQUIREMENTS } from "@/data/project-dashboard-mock";
@@ -27,7 +28,7 @@ function DetailSidebar({ selectedId }: { selectedId: string }) {
   const { state, ready } = useDemo();
   const [filters, setFilters] = useState<BrowseFilters>(DEFAULT_FILTERS);
   const all = publishedProjects(state);
-  return <ProjectBrowser all={all} results={browse(all, filters)} filters={filters} onChange={setFilters} selectedId={selectedId} loading={!ready} className="lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)]" />;
+  return <ProjectBrowser all={all} results={browse(all, filters)} filters={filters} onChange={setFilters} selectedId={selectedId} loading={!ready} className="lg:sticky lg:top-[7.5rem] lg:h-[calc(100dvh-9rem)] lg:overflow-y-auto lg:overscroll-contain" />;
 }
 
 export default function ProjectDetailPage() {
@@ -38,10 +39,9 @@ export default function ProjectDetailPage() {
   const [doc, setDoc] = useState<string | null>(null);
   const [enquire, setEnquire] = useState(false);
 
-  if (!ready) return <LoadingPage />;
+  if (!ready) return <ProjectDetailSkeleton />;
   const p = projectById(state, projectId);
-  const canPreview = !!p && !!session && (session.role === "admin" || session.userId === p.ownerId);
-  if (!p || (!isPublished(p) && !canPreview)) {
+  if (!p || !isPublished(p)) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
         <EmptyState title="Project not found" body="This project does not exist or is not published in the demo catalogue." action={<LinkButton href="/project-dashboard">Back to Projects</LinkButton>} />
@@ -59,9 +59,9 @@ export default function ProjectDetailPage() {
 
   const toggleSave = () => {
     if (!session) return router.push(`/login?next=${encodeURIComponent(`/projects/${p.id}`)}`);
-    if (!isInvestor) return toast("Watchlists are available to investor accounts.", "warn");
+    if (!isInvestor) return toast("Wishlists are available to investor accounts.", "warn");
     const r = run((s) => toggleWatchlist(s, session.userId, p.id));
-    if (r.ok) toast(r.data ? "Saved to your watchlist." : "Removed from your watchlist.", "ok");
+    if (r.ok) toast(r.data ? "Saved to your wishlist." : "Removed from your wishlist.", "ok");
   };
   const copyLink = async () => {
     try { await navigator.clipboard.writeText(window.location.href); toast("Project link copied.", "ok"); }

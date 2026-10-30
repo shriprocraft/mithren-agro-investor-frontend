@@ -140,7 +140,7 @@ export function ErrorState({ title = "Something went wrong", body, onRetry }: { 
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div aria-hidden className={cn("animate-pulse rounded-control bg-earth-200", className)} />;
+  return <div aria-hidden className={cn("skeleton rounded-control", className)} />;
 }
 
 export function LoadingPage({ label = "Loading…" }: { label?: string }) {

@@ -1,16 +1,20 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Button, Card, CheckField, PageTitle, TextField } from "@/components/common/ui";
+import Link from "next/link";
+import { Button, Card, CheckField, DefList, PageTitle, TextField } from "@/components/common/ui";
 import { VerificationBadge } from "@/components/common/badges";
 import { useToast } from "@/components/common/feedback";
 import { useDemo } from "@/context/DemoContext";
+import { useInvestor } from "@/hooks/useInvestor";
+import { formatDate, formatINR } from "@/lib/format";
 import { updateProfile } from "@/lib/mock-service";
 import { isPhone } from "@/lib/validation";
 
 export default function ProfilePage() {
   const { user, run } = useDemo();
   const toast = useToast();
+  const d = useInvestor();
   const [f, setF] = useState({ name: user?.name ?? "", phone: user?.phone ?? "", location: user?.location ?? "", alerts: user?.emailAlerts ?? true });
   const [e, setE] = useState<Record<string, string>>({});
   if (!user) return null;
@@ -37,6 +41,39 @@ export default function ProfilePage() {
           <div className="md:col-span-2"><Button type="submit">Save changes</Button></div>
         </form>
       </Card>
+      <div className="mt-6 grid max-w-4xl gap-6 md:grid-cols-2">
+        <Card className="p-6!">
+          <h2 className="text-lg font-bold text-brand-900">Account details</h2>
+          <div className="mt-4">
+            <DefList rows={[
+              ["Account ID", user.id],
+              ["Account type", "Investor (demo)"],
+              ["Member since", formatDate(user.createdAt)],
+              ["Verification", <VerificationBadge key="v" status={user.verification} />],
+              ["Bank account", user.bank ? `${user.bank.bankName} · ${user.bank.maskedAccount}` : "Not added"],
+              ["Account holder", user.bank?.holderName ?? "—"],
+            ]} />
+          </div>
+          <Link href="/investor/bank-details" className="mt-4 inline-block text-sm font-semibold text-brand-700 hover:underline">Manage bank details &amp; verification</Link>
+        </Card>
+        <Card className="p-6!">
+          <h2 className="text-lg font-bold text-brand-900">Portfolio at a glance</h2>
+          <div className="mt-4">
+            <DefList rows={[
+              ["Active investments", d.summary.activeCount],
+              ["Amount invested (open)", formatINR(d.summary.invested)],
+              ["Est. portfolio value", formatINR(d.summary.value)],
+              ["Available cash", formatINR(d.cash.available)],
+              ["Total positions", d.investments.length],
+              ["Transactions", d.transactions.length],
+            ]} />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold text-brand-700">
+            <Link href="/investor/portfolio" className="hover:underline">View portfolio</Link>
+            <Link href="/investor/transactions" className="hover:underline">View transactions</Link>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

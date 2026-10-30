@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, FileSearch, LineChart, Search, Wallet } from "lucide-react";
@@ -9,6 +10,7 @@ import { ProjectCatalogue } from "@/components/plans/ProjectCatalogue";
 import { CATEGORIES, COPY } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { publishedProjects } from "@/lib/project-helpers";
+import { FaqAccordion } from "@/components/common/FaqAccordion";
 import { faqs } from "@/content/faq";
 
 const STEPS = [
@@ -34,7 +36,11 @@ export default function HomePage() {
               <LinkButton href="/how-it-works" variant="secondary" className="min-h-12 px-6">How it works</LinkButton>
             </div>
           </motion.div>
-          <Card className="self-center md:col-span-2">
+          <Card className="self-center overflow-hidden p-0! md:col-span-2">
+            <div className="relative aspect-[16/9] w-full [mask-image:linear-gradient(to_bottom,black_50%,transparent_96%),linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [mask-composite:intersect]">
+              <Image src="/images/mithren-catalogue.jpg" alt="Mithren Agro crate of fresh vegetables in front of farm fields" fill priority sizes="(min-width: 1152px) 440px, (min-width: 768px) 40vw, 100vw" className="object-cover object-[60%_50%]" />
+            </div>
+            <div className="relative -mt-1 px-5 pb-5">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Demo catalogue at a glance</h2>
               <span className="shrink-0 rounded bg-neutral-bg px-1.5 py-0.5 text-[11px] text-neutral-fg">SAMPLE</span>
@@ -44,6 +50,7 @@ export default function HomePage() {
               <div className="min-w-0"><dt className="text-xs leading-4 text-muted">Categories supported</dt><dd className="tabular mt-1 text-3xl font-bold leading-none text-brand-900">{CATEGORIES.length}</dd></div>
             </dl>
             <p className="mt-4 text-xs text-muted">These are counts of fictional demo records, not platform performance claims.</p>
+            </div>
           </Card>
         </div>
       </section>
@@ -76,11 +83,7 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-6xl px-4 pb-4">
         <h2 className="mb-4 text-2xl font-bold text-brand-900">Common questions</h2>
-        <div className="space-y-3">
-          {faqs.slice(0, 3).map((f) => (
-            <details key={f.q} className="rounded-card border border-line bg-white px-5 py-3"><summary className="min-h-8 cursor-pointer font-semibold">{f.q}</summary><p className="mt-2 text-sm text-muted">{f.a}</p></details>
-          ))}
-        </div>
+        <FaqAccordion items={faqs.slice(0, 3)} />
         <Link href="/faq" className="mt-3 inline-block text-sm font-semibold text-brand-700 hover:underline">See all FAQs</Link>
       </section>
     </>

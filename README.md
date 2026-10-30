@@ -16,24 +16,21 @@ npm run typecheck && npm run lint
 
 ## Try it
 
-Open `/login` and use a demo shortcut:
+Open `/login` and sign in manually with the demo credentials shown below the form:
 
-| Shortcut | What to try |
-|---|---|
-| Investor with portfolio | Dashboard, ₹100 simulated investment (`/projects/p-1` → Simulate), sell/redeem, withdraw, cash ledger |
-| Investor, no positions | Empty states, onboarding wizard, verification checklist |
-| Project owner | Create/edit/submit a project, milestones, updates |
-| Admin | Approve/reject projects, advance exit and withdrawal queues, reconciliation, audit, reports |
+- **Email:** `ananyarao@gmail.com`
+- **Password:** `demo123` (demo only — the password is never checked)
 
-The account menu (top right) switches demo role and **resets demo data**. Role switching is a prototype convenience,
-not a security boundary.
+This is Ananya Rao's seeded investor account: dashboard, portfolio, ₹100 simulated investment (`/projects/p-1` → Simulate), sell/redeem, withdraw, cash ledger.
+
+The account menu (top right) **resets demo data** and logs out. The app contains the investor experience only.
 
 ## Structure
 
 ```
 src/
-  app/          routes: (public) incl. auth, investor/, owner/, admin/
-  components/   common/ (ui, tables, dialogs, badges), layout/, analysis/, projects/, owner/, admin/
+  app/          routes: (public) incl. auth, investor/
+  components/   common/ (ui, tables, dialogs, badges), layout/, analysis/, projects/
   config/       design-tokens, demo-config (all demo assumptions), navigation
   context/      DemoContext — shared mock session + state, versioned localStorage
   data/         typed seed data (projects, users, investments, transactions …)

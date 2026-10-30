@@ -4,9 +4,10 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Activity, FolderKanban, Layers, Wallet } from "lucide-react";
-import { Badge, Button, Callout, EmptyState, LoadingPage, ProgressBar, SelectField, type Tone } from "@/components/common/ui";
+import { Badge, Button, Callout, EmptyState, ProgressBar, SelectField, type Tone } from "@/components/common/ui";
 import { ProjectImage } from "@/components/common/visuals";
 import { EnquiryModal, type EnquiryPrefill } from "@/components/plans/EnquiryModal";
+import { MarketSkeleton } from "@/components/common/skeletons";
 import { HBarChart, MultiLineChart, SERIES_COLORS } from "@/components/projects/dashboard-charts";
 import { MockStatusBadge } from "@/components/projects/MockStatusBadge";
 import { ProjectBrowser } from "@/components/projects/ProjectBrowser";
@@ -66,7 +67,7 @@ function Dashboard() {
       </header>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
-        <ProjectBrowser all={all} results={shown} filters={filters} onChange={setFilters} loading={!ready} className="lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:self-start" />
+        <ProjectBrowser all={all} results={shown} filters={filters} onChange={setFilters} loading={!ready} className="lg:sticky lg:top-[7.5rem] lg:h-[calc(100dvh-9rem)] lg:overflow-y-auto lg:overscroll-contain lg:self-start" />
 
         <div className="min-w-0 space-y-8">
           {summary.illustrative && <Callout tone="info" title="Illustrative mock data">{MOCK_LABEL} Statuses, progress, budgets, contributions, activities and trends below are sample values for demonstration only.</Callout>}
@@ -172,5 +173,5 @@ function Dashboard() {
 }
 
 export default function ProjectDashboardPage() {
-  return <Suspense fallback={<LoadingPage />}><Dashboard /></Suspense>;
+  return <Suspense fallback={<MarketSkeleton />}><Dashboard /></Suspense>;
 }

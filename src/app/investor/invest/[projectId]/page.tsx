@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useId, useState } from "react";
-import { Breadcrumbs, Button, Callout, Card, CheckField, DefList, EmptyState, LinkButton, LoadingPage, PageTitle, TextField } from "@/components/common/ui";
+import { Breadcrumbs, Button, Callout, Card, CheckField, DefList, EmptyState, LinkButton, PageTitle, TextField } from "@/components/common/ui";
 import { ProjectImage } from "@/components/common/visuals";
 import { useToast } from "@/components/common/feedback";
 import { COPY, DEMO_CONFIG } from "@/config/demo-config";
+import { FormPageSkeleton } from "@/components/common/skeletons";
 import { useDemo } from "@/context/DemoContext";
 import { fundingProgress } from "@/lib/analysis-calculations";
 import { formatINR } from "@/lib/format";
@@ -24,7 +25,7 @@ function InvestFlow() {
   const [step, setStep] = useState<"amount" | "review">("amount");
   // Amount chosen on the Browse Projects panel; still fully re-validated below.
   const prefill = useSearchParams().get("amount");
-  const [raw, setRaw] = useState(prefill && /^d+(.d{1,2})?$/.test(prefill) ? prefill : "");
+  const [raw, setRaw] = useState(prefill && /^\d+(\.\d{1,2})?$/.test(prefill) ? prefill : "");
   const [touched, setTouched] = useState(Boolean(prefill));
   const [ack, setAck] = useState(false);
   const [ackError, setAckError] = useState<string>();
@@ -125,5 +126,5 @@ function InvestFlow() {
 }
 
 export default function InvestPage() {
-  return <Suspense fallback={<LoadingPage />}><InvestFlow /></Suspense>;
+  return <Suspense fallback={<FormPageSkeleton label="Loading investment form…" fields={2} />}><InvestFlow /></Suspense>;
 }

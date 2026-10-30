@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 import { COPY } from "@/config/demo-config";
-import { PUBLIC_NAV, ROLE_HOME } from "@/config/navigation";
+import { INVESTOR_HOME, PUBLIC_NAV } from "@/config/navigation";
 import { useDemo } from "@/context/DemoContext";
 import { cn } from "@/lib/cn";
 import { LinkButton } from "@/components/common/ui";
@@ -35,8 +35,20 @@ export function PublicHeader() {
   const { session, ready } = useDemo();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+  // Publish the sticky header's live height so full-viewport layouts (e.g. /projects columns) can size around it.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const sync = () => root.style.setProperty("--public-header-h", `${el.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => { ro.disconnect(); root.style.removeProperty("--public-header-h"); };
+  }, []);
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-white">
+    <header ref={ref} className="sticky top-0 z-30 border-b border-line bg-white">
       <DemoBanner />
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Logo />
@@ -48,7 +60,7 @@ export function PublicHeader() {
         <div className="flex items-center gap-2">
           {ready && session ? (
             <>
-              <span className="hidden sm:inline-flex"><LinkButton href={ROLE_HOME[session.role]} variant="secondary">My workspace</LinkButton></span>
+              <span className="hidden sm:inline-flex"><LinkButton href={INVESTOR_HOME} variant="secondary">My workspace</LinkButton></span>
               <HeaderActions />
             </>
           ) : (

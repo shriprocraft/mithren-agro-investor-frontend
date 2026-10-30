@@ -41,7 +41,7 @@ const bank = (holder: string, mask: string) => ({
 });
 
 export const SEED_USERS: DemoUser[] = [
-  mk({ id: "inv-1", name: "Ananya Rao", email: "ananya.demo@example.com", phone: "9000000001", role: "investor", verification: "approved_demo", bank: bank("Ananya Rao", "XXXX 4821"), location: "Bengaluru", createdAt: "2026-05-01T10:00:00+05:30" }),
+  mk({ id: "inv-1", name: "Ananya Rao", email: "ananyarao@gmail.com", phone: "9000000001", role: "investor", verification: "approved_demo", bank: bank("Ananya Rao", "XXXX 4821"), location: "Bengaluru", createdAt: "2026-05-01T10:00:00+05:30" }),
   mk({ id: "inv-2", name: "Rohan Mehta", email: "rohan.demo@example.com", phone: "9000000002", role: "investor", verification: "action_required", bank: null, location: "Mumbai", createdAt: "2026-10-12T10:00:00+05:30" }),
   mk({ id: "inv-3", name: "Vikram Shah", email: "vikram.demo@example.com", role: "investor", verification: "submitted", bank: null, location: "Ahmedabad", createdAt: "2026-10-18T10:00:00+05:30" }),
   mk({ id: "inv-4", name: "Neha Kulkarni", email: "neha.demo@example.com", role: "investor", verification: "rejected_demo", bank: null, location: "Pune", createdAt: "2026-09-02T10:00:00+05:30" }),
@@ -51,10 +51,8 @@ export const SEED_USERS: DemoUser[] = [
   mk({ id: "admin-1", name: "Kavita Iyer", email: "admin@example.com", phone: "9000000099", role: "admin", verification: "approved_demo", bank: null, location: "Demo HQ", createdAt: "2026-01-01T10:00:00+05:30" }),
 ];
 
-/** Quick-login shortcuts on /login. */
-export const DEMO_LOGINS = [
-  { userId: "inv-1", label: "Investor with portfolio", hint: "Ananya Rao · positions, cash, pending requests" },
-  { userId: "inv-2", label: "Investor, no positions", hint: "Rohan Mehta · empty states, verification pending" },
-  { userId: "owner-1", label: "Project owner", hint: "Meera Patil · drafts, submissions, active project" },
-  { userId: "admin-1", label: "Admin", hint: "Kavita Iyer · review queues, reconciliation" },
-] as const;
+/** Demo credentials shown on /login. The password is never checked — any non-empty value works. */
+export const DEMO_CREDENTIALS = { email: "ananyarao@gmail.com", password: "demo123" } as const;
+
+/** Email the seeded investor used before the login change; migrated in saved browser state. */
+export const LEGACY_DEMO_EMAIL = "ananya.demo@example.com";

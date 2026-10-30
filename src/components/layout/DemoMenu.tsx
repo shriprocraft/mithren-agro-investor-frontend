@@ -5,18 +5,11 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, LogOut, RotateCcw, User, Users } from "lucide-react";
 import { ConfirmationDialog, useToast } from "@/components/common/feedback";
 import { useDemo } from "@/context/DemoContext";
-import { ROLE_HOME, ROLE_LABEL } from "@/config/navigation";
-import type { Role } from "@/types";
-
-const SWITCH: { role: Role; userId: string }[] = [
-  { role: "investor", userId: "inv-1" },
-  { role: "owner", userId: "owner-1" },
-  { role: "admin", userId: "admin-1" },
-];
+import { INVESTOR_HOME } from "@/config/navigation";
 
 /** Demo-only convenience. NOT an authorization mechanism. */
 export function DemoMenu() {
-  const { session, loginAs, logout, resetDemo } = useDemo();
+  const { session, logout, resetDemo } = useDemo();
   const router = useRouter();
   const toast = useToast();
   const [open, setOpen] = useState(false);
@@ -46,13 +39,11 @@ export function DemoMenu() {
       </button>
       {open && (
         <div role="menu" aria-label="Demo menu" className="absolute right-0 z-40 mt-1 w-64 overflow-hidden rounded-card border border-line bg-white shadow-card">
-          <p className="border-b border-line px-3 py-2 text-xs text-muted">Demo session · {ROLE_LABEL[session.role]}<br />{session.email}</p>
-          <p className="px-3 pt-2 text-xs font-semibold uppercase text-muted">Switch demo role</p>
-          {SWITCH.map((s) => (
-            <button key={s.role} role="menuitem" type="button" className={item} onClick={() => { loginAs(s.userId); setOpen(false); router.push(ROLE_HOME[s.role]); }}>
-              <Users className="size-4" aria-hidden /> {ROLE_LABEL[s.role]} {session.role === s.role && <span className="ml-auto text-xs text-muted">current</span>}
-            </button>
-          ))}
+          <p className="border-b border-line px-3 py-2 text-xs text-muted">Demo session · Investor<br />{session.email}</p>
+          <p className="px-3 pt-2 text-xs font-semibold uppercase text-muted">Demo role</p>
+          <button role="menuitem" type="button" className={item} onClick={() => { setOpen(false); router.push(INVESTOR_HOME); }}>
+            <Users className="size-4" aria-hidden /> Investor <span className="ml-auto text-xs text-muted">current</span>
+          </button>
           <div className="border-t border-line" />
           <button role="menuitem" type="button" className={item} onClick={() => { setOpen(false); setConfirmReset(true); }}><RotateCcw className="size-4" aria-hidden /> Reset demo data</button>
           <button role="menuitem" type="button" className={item} onClick={() => { logout(); setOpen(false); router.push("/"); toast("Signed out of the demo session.", "neutral"); }}><LogOut className="size-4" aria-hidden /> Log out</button>
@@ -65,7 +56,7 @@ export function DemoMenu() {
         confirmLabel="Reset demo data"
         danger
         onCancel={() => setConfirmReset(false)}
-        onConfirm={() => { resetDemo(); setConfirmReset(false); toast("Demo data restored to the seeded state.", "ok"); router.push(ROLE_HOME[session.role]); }}
+        onConfirm={() => { resetDemo(); setConfirmReset(false); toast("Demo data restored to the seeded state.", "ok"); router.push(INVESTOR_HOME); }}
       />
     </div>
   );

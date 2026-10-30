@@ -16,10 +16,10 @@ export default function WatchlistPage() {
   if (!user) return null;
   return (
     <>
-      <PageTitle title="Watchlist" subtitle="Projects you saved. Stored locally in this demo." actions={<LinkButton href="/projects" variant="secondary">Find more projects</LinkButton>} />
-      {projects.length === 0 ? <EmptyState title="Your watchlist is empty" body="Use the Save button on any project to keep it here." action={<LinkButton href="/projects">Browse projects</LinkButton>} /> : (
+      <PageTitle title="Wishlist" subtitle="Projects you’ve saved to consider investing in." actions={<LinkButton href="/projects" variant="secondary">Find more projects</LinkButton>} />
+      {projects.length === 0 ? <EmptyState title="Your wishlist is empty" body="Use the Save button on any project to keep it here." action={<LinkButton href="/projects">Browse projects</LinkButton>} /> : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {projects.map((p) => <ProjectCard key={p!.id} project={p!} saved onToggleSave={() => { run((s) => toggleWatchlist(s, user.id, p!.id)); toast("Removed from your watchlist.", "ok"); }} />)}
+          {projects.map((p) => <ProjectCard key={p!.id} project={p!} saved onToggleSave={() => { run((s) => toggleWatchlist(s, user.id, p!.id)); toast("Removed from your wishlist.", "ok"); }} />)}
         </div>
       )}
     </>

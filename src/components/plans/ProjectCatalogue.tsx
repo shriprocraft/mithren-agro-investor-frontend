@@ -5,14 +5,16 @@ import Link from "next/link";
 import { Badge, Button, EmptyState } from "@/components/common/ui";
 import { ProjectImage } from "@/components/common/visuals";
 import { EnquiryModal, type EnquiryPrefill } from "@/components/plans/EnquiryModal";
+import { ProjectCardGridSkeleton } from "@/components/common/skeletons";
 import { CATEGORIES, categoryLabel } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
+import { PROJECT_IMAGES } from "@/data/project-images";
 import { cn } from "@/lib/cn";
 import { publishedProjects } from "@/lib/project-helpers";
 import type { CategoryId } from "@/types";
 
 export function ProjectCatalogue() {
-  const { state } = useDemo();
+  const { state, ready } = useDemo();
   const [category, setCategory] = useState<CategoryId | "">("");
   const [prefill, setPrefill] = useState<EnquiryPrefill | null>(null);
   const all = useMemo(() => publishedProjects(state), [state]);
@@ -42,12 +44,12 @@ export function ProjectCatalogue() {
         })}
       </div>
 
-      {shown.length === 0 ? <EmptyState title="No projects in this category" /> : (
+      {!ready ? <ProjectCardGridSkeleton /> : shown.length === 0 ? <EmptyState title="No projects in this category" /> : (
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {shown.map((p) => (
             <li key={p.id} className="flex">
               <article className="group flex w-full flex-col overflow-hidden rounded-card border border-line bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-hover">
-                <ProjectImage category={p.category} title={p.title} src={p.image} className="aspect-[16/9] w-full" />
+                <ProjectImage category={p.category} title={p.title} src={p.image ?? PROJECT_IMAGES[p.id]} className="aspect-[16/9] w-full" />
                 <div className="flex flex-1 flex-col gap-3 p-4">
                   <Badge tone="ok" className="self-start">{categoryLabel(p.category)}</Badge>
                   <h3 className="text-lg font-bold leading-snug text-brand-900">{p.title}</h3>
@@ -68,6 +70,7 @@ export function ProjectCatalogue() {
           ))}
         </ul>
       )}
+      {ready && shown.length > 0 && <p className="text-xs text-muted">Representative photos from Wikimedia Commons contributors (CC licences), not images of the listed demo projects.</p>}
       <EnquiryModal open={prefill !== null} onClose={() => setPrefill(null)} prefill={prefill ?? {}} />
     </section>
   );

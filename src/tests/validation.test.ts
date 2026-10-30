@@ -66,16 +66,16 @@ describe("field validators", () => {
 });
 
 describe("safeNext (post-login redirect)", () => {
-  it("blocks open redirects and cross-role paths", () => {
-    expect(safeNext("//evil.com", "investor")).toBe("/investor/dashboard");
-    expect(safeNext("https://evil.com", "investor")).toBe("/investor/dashboard");
-    expect(safeNext("/admin/users", "investor")).toBe("/investor/dashboard");
-    expect(safeNext("/investor/portfolio", "owner")).toBe("/owner/dashboard");
-    expect(safeNext(null, "admin")).toBe("/admin/dashboard");
+  it("blocks open redirects and removed owner/admin paths", () => {
+    expect(safeNext("//evil.com")).toBe("/investor/dashboard");
+    expect(safeNext("https://evil.com")).toBe("/investor/dashboard");
+    expect(safeNext("/admin/users")).toBe("/investor/dashboard");
+    expect(safeNext("/owner/projects")).toBe("/investor/dashboard");
+    expect(safeNext(null)).toBe("/investor/dashboard");
   });
   it("preserves permitted destinations", () => {
-    expect(safeNext("/investor/invest/p-1", "investor")).toBe("/investor/invest/p-1");
-    expect(safeNext("/projects/p-1", "owner")).toBe("/projects/p-1");
+    expect(safeNext("/investor/invest/p-1")).toBe("/investor/invest/p-1");
+    expect(safeNext("/projects/p-1")).toBe("/projects/p-1");
   });
 });
 

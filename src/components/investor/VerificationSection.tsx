@@ -33,7 +33,7 @@ export function VerificationSection() {
           <Button disabled={!editable} title={editable ? undefined : "Already submitted for demo review"} onClick={() => { const r = run((s) => submitVerification(s, user.id)); toast(r.ok ? "Submitted for demo review." : r.error, r.ok ? "ok" : "bad"); }}>Submit for demo review</Button>
           <LinkButton variant="secondary" href="/investor/onboarding">Open onboarding wizard</LinkButton>
         </div>
-        {!editable && <p className="mt-2 text-xs text-muted">Already submitted — an admin can action it in the demo admin workspace.</p>}
+        {!editable && <p className="mt-2 text-xs text-muted">Already submitted — this demo checklist is awaiting review.</p>}
       </Card>
     </section>
   );

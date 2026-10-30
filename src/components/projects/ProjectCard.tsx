@@ -45,7 +45,7 @@ export function ProjectCard({ project: p, saved, onToggleSave, layout = "grid", 
         <div className="mt-auto flex flex-wrap gap-2 pt-1">
           <LinkButton href={viewHref ?? `/projects/${p.id}`} className="flex-1">View project</LinkButton>
           {onToggleSave && (
-            <Button variant="secondary" aria-pressed={saved} aria-label={saved ? `Remove ${p.title} from watchlist` : `Save ${p.title} to watchlist`} onClick={onToggleSave}>
+            <Button variant="secondary" aria-pressed={saved} aria-label={saved ? `Remove ${p.title} from wishlist` : `Save ${p.title} to wishlist`} onClick={onToggleSave}>
               <Heart className={cn("size-4", saved && "fill-brand-600 text-brand-600")} aria-hidden /> {saved ? "Saved" : "Save"}
             </Button>
           )}

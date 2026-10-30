@@ -22,10 +22,12 @@ export function ProjectImage({ category, title, className, src }: { category: Ca
   const v = VISUAL[category];
   const Icon = v.icon;
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   if (src && !failed) {
+    // Fixed-size box with a shimmer until the photo decodes, so the card never shifts.
     return (
-      <div className={cn("relative overflow-hidden bg-brand-50", className)}>
-        <Image src={src} alt={title} fill sizes="(min-width: 1024px) 360px, 100vw" className="object-cover" onError={() => setFailed(true)} />
+      <div className={cn("relative overflow-hidden", loaded ? "bg-brand-50" : "skeleton rounded-none", className)}>
+        <Image src={src} alt={title} fill sizes="(min-width: 1024px) 360px, 100vw" className={cn("object-cover transition-opacity duration-300", loaded ? "opacity-100" : "opacity-0")} onLoad={() => setLoaded(true)} onError={() => setFailed(true)} />
       </div>
     );
   }

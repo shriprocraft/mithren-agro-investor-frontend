@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# full-resolution brand source image (18 MB); the site uses public/images/mithren-catalogue.jpg
+/MITHREN.png

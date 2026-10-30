@@ -9,9 +9,10 @@ import { CurrencyAmount, GainLossValue, TransactionStatusBadge } from "@/compone
 import { DemoDocumentPreview } from "@/components/common/feedback";
 import { MilestoneTimeline } from "@/components/common/visuals";
 import { ValuationChart } from "@/components/analysis/ValuationChart";
-import { DEMO_CONFIG, INVESTMENT_STATUS_LABEL } from "@/config/demo-config";
+import { DEMO_CONFIG, durationLabel, INVESTMENT_STATUS_LABEL } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { useInvestor } from "@/hooks/useInvestor";
+import { addMonths } from "@/lib/dashboard-calculations";
 import { formatDate, formatDateTime, formatINR } from "@/lib/format";
 import { gainLoss, gainLossPercent, isOpenExit } from "@/lib/portfolio-calculations";
 import { projectById } from "@/lib/project-helpers";
@@ -57,7 +58,7 @@ export default function InvestmentDetailPage() {
             <div className="space-y-6">
               <ValuationChart points={history} title="Estimated value history (sample)" />
               <Link href={`/investor/portfolio/${inv.id}/history`} className="inline-block text-sm font-semibold text-brand-700 hover:underline">Open full valuation history</Link>
-              <DefList rows={[["Project stage", p?.stage ?? "—"], ["Demo reference", inv.id], ["Currency", inv.currency], ["Exit options", el.canRequestExit ? `${el.canRequestPartialExit ? "Partial, " : ""}${el.canRequestFullExit ? "Full" : ""}`.replace(/, $/, "") + " (demo fixture)" : "None (demo fixture)"]]} />
+              <DefList rows={[["Project stage", p?.stage ?? "—"], ["Location", p?.location ?? "—"], ["Invested on", formatDate(inv.purchasedAt)], ["Project duration", p ? durationLabel(p.durationMonths) : "—"], ["Planned end (invested on + duration)", p ? formatDate(addMonths(inv.purchasedAt, p.durationMonths).toISOString()) : "—"], ["Demo reference", inv.id], ["Currency", inv.currency], ["Exit options", el.canRequestExit ? `${el.canRequestPartialExit ? "Partial, " : ""}${el.canRequestFullExit ? "Full" : ""}`.replace(/, $/, "") + " (demo fixture)" : "None (demo fixture)"]]} />
             </div>) },
           { id: "progress", label: "Project progress", content: p ? (<div className="space-y-5"><MilestoneTimeline items={p.milestones} />{p.updates.length > 0 && <ul className="space-y-2 text-sm">{p.updates.map((u) => <li key={u.id}><strong>{u.title}</strong> <span className="text-muted">· {formatDate(u.date)}</span><br /><span className="text-muted">{u.body}</span></li>)}</ul>}</div>) : <EmptyState title="Project unavailable" /> },
           { id: "tx", label: "Transactions", content: txs.length === 0 ? <EmptyState title="No transactions" /> : (<ul className="divide-y divide-line">{txs.map((t) => (<li key={t.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"><div><Link href={`/investor/transactions/${t.id}`} className="font-semibold capitalize hover:underline">{t.type} · {formatINR(t.amount)}</Link><span className="block text-xs text-muted">{t.id} · {formatDateTime(t.createdAt)}</span></div><TransactionStatusBadge status={t.status} /></li>))}</ul>) },

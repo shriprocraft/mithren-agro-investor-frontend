@@ -4,13 +4,13 @@ import { useState, type FormEvent } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { Modal } from "@/components/common/feedback";
 import { Button, Callout, SelectField, TextAreaField, TextField } from "@/components/common/ui";
-import { CATEGORIES } from "@/config/demo-config";
+import { CATEGORIES, categoryLabel } from "@/config/demo-config";
 import { useDemo } from "@/context/DemoContext";
 import { addEnquiry } from "@/lib/mock-service";
 import { publishedProjects } from "@/lib/project-helpers";
 import { parseAmount } from "@/lib/validation";
 
-export type EnquiryPrefill = { projectId?: string; planId?: string; amount?: number; heading?: string };
+export type EnquiryPrefill = { projectId?: string; planId?: string; amount?: number; heading?: string; message?: string };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\+?[\d\s-]{10,15}$/;
@@ -23,7 +23,7 @@ function EnquiryForm({ prefill, onClose }: { prefill: EnquiryPrefill; onClose: (
   const [projectId, setProjectId] = useState(prefill.projectId ?? "");
   const [categoryId, setCategoryId] = useState("");
   const [amount, setAmount] = useState(prefill.amount ? String(prefill.amount) : "");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(prefill.message ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<string | null>(null);
@@ -69,10 +69,14 @@ function EnquiryForm({ prefill, onClose }: { prefill: EnquiryPrefill; onClose: (
         <option value="">No specific project</option>
         {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
       </SelectField>
-      <SelectField label="Project category" value={effectiveCategory} onChange={(e) => setCategoryId(e.target.value)} disabled={!!project} hint={project ? "Set by the selected project." : undefined}>
-        <option value="">Any category</option>
-        {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-      </SelectField>
+      {project ? (
+        <TextField label="Project category" value={categoryLabel(project.category)} readOnly aria-readonly hint="Set automatically from the selected project." className="cursor-default bg-earth-100" />
+      ) : (
+        <SelectField label="Project category" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+          <option value="">Any category</option>
+          {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+        </SelectField>
+      )}
       <TextField label="Preferred contribution amount (₹)" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} error={errors.amount} placeholder="e.g. 25000" />
       <TextAreaField label="Message" value={message} onChange={(e) => setMessage(e.target.value)} error={errors.message} placeholder="Tell us what you would like to discuss" maxLength={1000} />
       <Callout tone="neutral">An enquiry is not a commitment, and contributions are not guaranteed returns.</Callout>
